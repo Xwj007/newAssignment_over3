@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.njfu.mapper.UserMapper">
+    <resultMap type="com.njfu.entity.User" id="MessageResult">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="staff_id" jdbcType="VARCHAR" property="staff_id"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="last_update" jdbcType="VARCHAR" property="last_update"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+    </resultMap>
+
+    <select id="Query"  resultMap="MessageResult">
+        SELECT * FROM user
+    </select>
+
+    <select id="getOne"  parameterType="INTEGER" resultMap="MessageResult">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <insert id="insert"  parameterType="com.njfu.entity.User" >
+        INSERT INTO user (id, account, password, staff_id, phone, last_update, address, email ) VALUES (#{id}, #{account}, #{password}, #{staff_id}, #{phone}, #{last_update},  #{address},  #{email})
+    </insert>
+
+    <update id="update_pwd" parameterType="com.njfu.entity.User" >
+        UPDATE user SET account = #{account}, password = #{password}
+          WHERE id = #{id}
+    </update>
+
+    <update id="update_info" parameterType="com.njfu.entity.User" >
+        UPDATE user SET phone = #{phone}, last_update = #{last_update}, address = #{address}, email = #{email}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="INTEGER" >
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+    <select id="findUserByAccount"  parameterType="String" resultMap="MessageResult">
+        SELECT * FROM user WHERE account = #{account}
+    </select>
+
+    <resultMap type="com.njfu.entity.Staff" id="MessageStaff">
+        <result column="staff_id" jdbcType="VARCHAR" property="staff_id"/>
+        <result column="power" jdbcType="VARCHAR" property="power"/>
+        <result column="work" jdbcType="VARCHAR" property="work"/>
+    </resultMap>
+
+    <select id="findStaffById"  parameterType="String" resultMap="MessageStaff">
+        SELECT * FROM staff WHERE staff_id = #{staff_id}
+    </select>
+
+
+</mapper>

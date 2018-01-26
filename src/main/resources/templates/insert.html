@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
+    <style>
+    .login-box{max-width:400px;margin:5% auto;padding:20px;}
+    #top-logo{width:90px;height:90px;float:left;margin:10px 30px 10px 10px;}
+    #logo-text{margin:20px;color:rgb(50,150,230);}
+    #logo-text-en{font-size:40px;line-height:40px;}
+    #logo-text-cn{font-size:32px;line-height:32px;}
+    .login-title{padding:10px;text-align:center;}
+    .login-title h3{margin:0;}
+    .login-box-body{background-color:white;padding:20px;}
+    #account,#password,#staff_id,#phone,#address,#email{text-indent:10px;}
+    .input-group{padding:16px;margin-left:auto;margin-right:auto;}
+    .input-group button{width:100px;}
+    .checkbox{padding-left:20px;}
+    #login-alert{display:none;}
+    </style>
+</head>
+<body style="background-color:#3e2723;">
+<div class="container" >
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="login-box">
+                <div><img id="top-logo" src="../static/images/logo.png"></div>
+                <div id="logo-text"><span id="logo-text-en">PRD &nbsp;Tech</span><br><span id="logo-text-cn">&nbsp;人员添加</span></div>
+            <div class="login-box-body"  onsubmit="return checkForm()">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input id="account" type="text" class="form-control" v-model="account" placeholder="账号">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input id="password" type="text" class="form-control" v-model="password" placeholder="密码">
+                </div>  
+				<div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-certificate"></i></span>
+                    <input id="staff_id" type="text" class="form-control" v-model="staff_id" placeholder="员工ID">
+                </div>
+				<div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                    <input id="phone" type="text" class="form-control" v-model="phone" placeholder="电话号码">
+                </div>
+				<div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                    <input id="address" type="text" class="form-control" v-model="address" placeholder="家庭地址">
+                </div>
+				<div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                    <input id="email" type="text" class="form-control" v-model="email" placeholder="邮箱">
+                </div>
+                <div class="input-group"><button id="login-button" onclick="userLogin()" type="submit" class="btn btn-primary">确定</button></div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="login-alert" class="alert alert-info alert-dismissible fade in" role=alert>
+    <button  type="button" class="close" data-dismiss="alert" aria-label="Close" >
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <span>alert content</span>
+</div>
+
+
+<script src="../static/js/jquery-3.2.1.min.js"></script>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/js/vue.js"></script>
+<script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $("#account").keydown(function(event){
+            if(event.which === 13)
+                $("#password")[0].focus();
+        });
+		$("#password").keydown(function(event){
+            if(event.which === 13)
+                $("#staff_id")[0].focus();
+        });
+		$("#staff_id").keydown(function(event){
+            if(event.which === 13)
+                $("#phone")[0].focus();
+        });
+		$("#phone").keydown(function(event){
+            if(event.which === 13)
+                $("#address")[0].focus();
+        });
+		$("#address").keydown(function(event){
+            if(event.which === 13)
+                $("#email")[0].focus();
+        });
+        $("#email").keydown(function(event){
+            if(event.which === 13)
+                $("#login-button").click(userLogin());
+        });
+
+    });
+
+
+
+        function userLogin() {
+            var Account, Password, Password, Staff_id, Phone, Address, Email;
+            Account = $('#account').val();
+            Password = $('#password').val();
+			Staff_id = $('#staff_id').val();
+			Phone = $('#phone').val();
+			Address = $('#address').val();
+			Email = $('#email').val();
+	
+			var objJson = {
+				"account":Account,
+				"password":Password,
+				"staff_id":Staff_id,
+				"phone":Phone,
+				"address":Address,
+				"email":Email
+			};
+			
+			//$.ajaxSetup({contentType: "application/json"});
+			if(Account!=null && Account!="" && Password!=null && Password!="" && Staff_id!=null && Staff_id!=""){
+				$.post("http://127.0.0.1:8080/insert",
+					JSON.stringify(objJson),
+					function(data) {
+					   if(data.code == 1){
+                           Cookies.set('account', Account, { expires: 7, path: '' });
+						   alert(data.msg);
+						   window.open("index.html", "_self", Account);
+					   }
+					   else
+						   alert(data.msg);
+						//$("#login-alert").alert();
+
+					},
+					"JSON"
+				)
+			
+			}else{
+				alert("关键输入为空！");
+			}
+
+            
+			
+
+        }
+
+
+
+</script>
+
+</body>
+</html>

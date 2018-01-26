@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  tomcat:
+      uri-encoding: UTF-8
+
+spring:
+  http:
+      encoding:
+          force: true
+          charset: UTF-8
+          enabled: true
+  messages:
+      encoding: UTF-8
+  thymeleaf:
+      prefix: classpath:/templates/
+      suffic: .html
+      mode: HTML5
+      encoding: UTF-8
+      content-type: text/html
+
+  datasource:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://139.196.88.74:3306/usersql?characterEncoding=utf8&useSSL=true
+      username: ddcmrp
+      password: ddcmrp
+
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
