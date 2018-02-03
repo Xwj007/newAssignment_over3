@@ -9,6 +9,10 @@ spring:
           force: true
           charset: UTF-8
           enabled: true
+      multipart:
+          maxFileSize: 10Mb
+          maxRequestSize: 10Mb
+
   messages:
       encoding: UTF-8
   thymeleaf:
@@ -19,10 +23,10 @@ spring:
       content-type: text/html
 
   datasource:
-      driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://139.196.88.74:3306/usersql?characterEncoding=utf8&useSSL=true
-      username: ddcmrp
-      password: ddcmrp
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      url: jdbc:oracle:thin:@139.196.88.74:1521:orcl
+      username: assignment
+      password: 123456
 
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml

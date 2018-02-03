@@ -13,7 +13,7 @@
     .login-title{padding:10px;text-align:center;}
     .login-title h3{margin:0;}
     .login-box-body{background-color:white;padding:20px;}
-    #account,#staff_id{text-indent:10px;}
+    #account,#nclass{text-indent:10px;}
     .input-group{padding:16px;margin-left:auto;margin-right:auto;}
     .input-group button{width:100px;}
     .checkbox{padding-left:20px;}
@@ -35,7 +35,7 @@
                 </div>
 				<div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-certificate"></i></span>
-                    <input id="staff_id" type="text" class="form-control" v-model="staff_id" placeholder="员工ID">
+                    <input id="nclass" type="text" class="form-control" v-model="nclass" placeholder="班级">
                 </div>
                 <div class="input-group"><button id="login-button" onclick="userLogin()" type="submit" class="btn btn-primary">确定</button></div>
             </div>
@@ -60,9 +60,9 @@
     $(document).ready(function(){
         $("#account").keydown(function(event){
             if(event.which === 13)
-                $("#staff_id")[0].focus();
+                $("#nclass")[0].focus();
         });
-        $("#staff_id").keydown(function(event){
+        $("#nclass").keydown(function(event){
             if(event.which === 13)
                 $("#login-button").click(userLogin());
 
@@ -73,19 +73,19 @@
 
 
         function userLogin() {
-            var Account, Staff_id;
+            var Account, Nclass;
             Account = $('#account').val();
-            Staff_id = $('#staff_id').val();
+            Nclass = $('#nclass').val();
 	
 			var objJson = {
 				"account":Account,
-				"staff_id":Staff_id
+				"nclass":Nclass
 			};
 			
 			
 			
 			//$.ajaxSetup({contentType: "application/json"});
-			if(Account!=null && Account!="" && Staff_id!=null && Staff_id!=""){
+			if(Account!=null && Account!="" && Nclass!=null && Nclass!=""){
 				$.post("http://127.0.0.1:8080/delete",
 					JSON.stringify(objJson),
 					function(data) {

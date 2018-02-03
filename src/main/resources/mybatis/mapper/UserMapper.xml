@@ -4,54 +4,88 @@
 
 <mapper namespace="com.njfu.mapper.UserMapper">
     <resultMap type="com.njfu.entity.User" id="MessageResult">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="staff_id" jdbcType="VARCHAR" property="staff_id"/>
+        <id column="nid" jdbcType="INTEGER" property="id"/>
         <result column="account" jdbcType="VARCHAR" property="account"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
-        <result column="phone" jdbcType="VARCHAR" property="phone"/>
-        <result column="last_update" jdbcType="VARCHAR" property="last_update"/>
-        <result column="address" jdbcType="VARCHAR" property="address"/>
-        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="work" jdbcType="VARCHAR" property="work"/>
+        <result column="class" jdbcType="VARCHAR" property="nclass"/>
     </resultMap>
 
     <select id="Query"  resultMap="MessageResult">
-        SELECT * FROM user
-    </select>
-
-    <select id="getOne"  parameterType="INTEGER" resultMap="MessageResult">
-        SELECT * FROM user WHERE id = #{id}
+        SELECT * FROM user_admin
     </select>
 
     <insert id="insert"  parameterType="com.njfu.entity.User" >
-        INSERT INTO user (id, account, password, staff_id, phone, last_update, address, email ) VALUES (#{id}, #{account}, #{password}, #{staff_id}, #{phone}, #{last_update},  #{address},  #{email})
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO user_admin (nid, account, password, work, class) VALUES (#{id}, #{account}, #{password}, #{work}, #{nclass})
     </insert>
 
-    <update id="update_pwd" parameterType="com.njfu.entity.User" >
-        UPDATE user SET account = #{account}, password = #{password}
-          WHERE id = #{id}
-    </update>
-
-    <update id="update_info" parameterType="com.njfu.entity.User" >
-        UPDATE user SET phone = #{phone}, last_update = #{last_update}, address = #{address}, email = #{email}
-        WHERE id = #{id}
-    </update>
-
     <delete id="delete" parameterType="INTEGER" >
-        DELETE FROM user WHERE id = #{id}
+        DELETE FROM user_admin WHERE nid = #{id}
     </delete>
 
-    <select id="findUserByAccount"  parameterType="String" resultMap="MessageResult">
-        SELECT * FROM user WHERE account = #{account}
+    <select id="getTeacherList"  parameterType="com.njfu.entity.User"  resultType="String">
+        SELECT account FROM user_admin WHERE class = #{nclass} AND work = '1'
     </select>
 
-    <resultMap type="com.njfu.entity.Staff" id="MessageStaff">
-        <result column="staff_id" jdbcType="VARCHAR" property="staff_id"/>
-        <result column="power" jdbcType="VARCHAR" property="power"/>
-        <result column="work" jdbcType="VARCHAR" property="work"/>
+    <update id="update_pwd" parameterType="com.njfu.entity.User" >
+        UPDATE user_admin SET account = #{account}, password = #{password}
+          WHERE nid = #{id}
+    </update>
+
+
+    <select id="findUserByAccount"  parameterType="String" resultMap="MessageResult">
+        SELECT * FROM user_admin WHERE account= #{account}
+    </select>
+
+
+    <select id="findUserByOther"  parameterType="com.njfu.entity.User" resultMap="MessageResult">
+        SELECT * FROM user_admin
+        <where>
+            <if test ="account !=null">
+                account= #{account}
+            </if>
+            <if test ="work !=null">
+                and work= #{work}
+            </if>
+        </where>
+    </select>
+
+
+    <resultMap type="com.njfu.entity.Homework" id="HomeworkResult">
+        <id column="nid" jdbcType="INTEGER" property="id"/>
+        <result column="t_account" jdbcType="VARCHAR" property="t_account"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="filename" jdbcType="VARCHAR" property="filename"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
     </resultMap>
 
-    <select id="findStaffById"  parameterType="String" resultMap="MessageStaff">
-        SELECT * FROM staff WHERE staff_id = #{staff_id}
+
+    <insert id="insertHomework"  parameterType="com.njfu.entity.Homework">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO homework (nid, t_account, code, filename, address) VALUES ( #{id}, #{t_account}, #{code}, #{filename}, #{address})
+    </insert>
+
+    <select id="getHomeworkList"  parameterType="String"  resultType="String">
+        SELECT filename FROM homework
+        WHERE t_account = #{t_account}
+
+    </select>
+
+    <select id="findHomeworkByOther"  parameterType="com.njfu.entity.Homework"  resultMap="HomeworkResult">
+        SELECT * FROM homework
+        <where>
+            <if test ="t_account !=null">
+                t_account= #{t_account}
+            </if>
+            <if test ="filename !=null">
+                and filename= #{filename}
+            </if>
+        </where>
     </select>
 
 

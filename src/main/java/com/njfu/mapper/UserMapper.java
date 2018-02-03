@@ -2,7 +2,7 @@ package com.njfu.mapper;
 
 import java.util.List;
 
-import com.njfu.entity.Staff;
+import com.njfu.entity.Homework;
 import com.njfu.entity.User;
 
 /**
@@ -10,13 +10,17 @@ import com.njfu.entity.User;
  */
 public interface UserMapper {
     List<User> Query();
-    void insert(User test);
     void update_pwd(User test);
-    void update_info(User test);
-    void delete(Integer id);
-    //扩展接口//通过account查询账号密码
+    void insert(User test);
+    void delete(int id);
+    //扩展接口//动态查询
+    User findUserByOther(User test);
     User findUserByAccount(String account);
+    List<String> getTeacherList(User test);
 
-    Staff findStaffById(String staff_id);
+
+    Homework findHomeworkByOther(Homework test);
+    void insertHomework(Homework homework);
+    List<String> getHomeworkList(String t_account);
 
 }

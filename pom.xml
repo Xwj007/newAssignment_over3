@@ -43,15 +43,10 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<!-- mysql配置-->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
+		<!-- oracle mybatis -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 		<!-- HttpAspect AOP配置-->
 		<dependency>
