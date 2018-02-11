@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Insert title here</title>
+        <title>onclick here</title>
     </head>
 <body>
 
@@ -10,14 +10,30 @@
     action="http://localhost:8080/teacher_upload">
 	<p>任教姓名：<input type="text" name="t_account" id="t_account"/></p>
     <p>文件选择：<input type="file" name="file" id="file" multiple/></p>
-    <p><input type="submit" value="上传" /></p>
+    <p><input type="submit" value="教师上传" /></p>
 </form>
 
 <form method="POST" enctype="multipart/form-data" 
     action="http://localhost:8080/student_download_1">
-	<p>任教姓名：<input type="text" name="t_account" id="t_account"/></p>
+	<p>老师开课作业编号：<input type="text" name="file_no" id="file_no"/></p>
+    <p>文件名：<input type="text" name="file_name" id="file_name"/></p>
+    <p><input type="submit" value="学生下载" /></p>
+</form>
+
+<form method="POST" enctype="multipart/form-data"
+      action="http://localhost:8080/student_upload">
+    <p>学生姓名：<input type="text" name="s_account" id="s_account"/></p>
+    <p>任教姓名：<input type="text" name="t_account" id="t_account"/></p>
+    <p>文件选择：<input type="file" name="file" id="file" multiple/></p>
+    <p><input type="submit" value="学生上传" /></p>
+</form>
+
+
+<form method="POST" enctype="multipart/form-data"
+      action="http://localhost:8080/teacher_download_1">
+    <p>学生姓名：<input type="text" name="s_account" id="s_account"/></p>
     <p>文件名：<input type="text" name="file" id="file"/></p>
-    <p><input type="submit" value="下载" /></p>
+    <p><input type="submit" value="老师下载" /></p>
 </form>
 
 </body>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.njfu.mapper.SqlMapper">
+
+    <!--Student类集合 -->
+    <resultMap type="com.njfu.entity.Student" id="StudentResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="s_id" jdbcType="VARCHAR" property="s_id"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="class" jdbcType="VARCHAR" property="nclass"/>
+    </resultMap>
+
+    <select id="QueryStudent"  resultMap="StudentResult">
+        SELECT * FROM student
+    </select>
+
+    <insert id="addStudent"  parameterType="com.njfu.entity.Student" >
+        <selectKey keyProperty="nid" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO student (nid, s_id, account, password, class) VALUES (#{nid}, #{s_id}, #{account}, #{password}, #{nclass})
+    </insert>
+
+    <select id="findStudentByOther"  parameterType="com.njfu.entity.Student" resultMap="StudentResult">
+        SELECT * FROM student
+        <where>
+            <if test ="account !=null">
+                account= #{account}
+            </if>
+            <if test ="s_id !=null">
+                and s_id= #{s_id}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteStudent" parameterType="INTEGER" >
+        DELETE FROM student WHERE nid = #{nid}
+    </delete>
+
+
+
+
+
+    <!--Teacher类集合 -->
+    <resultMap type="com.njfu.entity.Teacher" id="TeacherResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="t_id" jdbcType="VARCHAR" property="t_id"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+    </resultMap>
+
+    <select id="QueryTeacher"  resultMap="TeacherResult">
+        SELECT * FROM teacher
+    </select>
+
+    <insert id="addTeacher"  parameterType="com.njfu.entity.Teacher" >
+        <selectKey keyProperty="nid" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO teacher (nid, t_id, account, password) VALUES (#{nid}, #{t_id}, #{account}, #{password})
+    </insert>
+
+
+    <select id="findTeacherByOther"  parameterType="com.njfu.entity.Teacher" resultMap="TeacherResult">
+        SELECT * FROM teacher
+        <where>
+            <if test ="account !=null">
+                account= #{account}
+            </if>
+            <if test ="t_id !=null">
+                and t_id= #{t_id}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteTeacher" parameterType="INTEGER" >
+        DELETE FROM teacher WHERE nid = #{nid}
+    </delete>
+
+
+    <select id="findTeacherNameByT_id" parameterType="String"  resultType="String">
+        SELECT account FROM teacher WHERE t_id= #{t_id}
+    </select>
+
+
+
+
+
+
+    <!--Course类集合 -->
+    <resultMap type="com.njfu.entity.Course" id="CourseResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="c_no" jdbcType="VARCHAR" property="c_no"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <select id="findCourseNameByC_no" parameterType="String"  resultType="String">
+        SELECT name FROM  course WHERE c_no = #{c_no}
+    </select>
+
+    <select id="findCourseNameByOther" parameterType="String"  resultType="String">
+        SELECT course.name FROM  course,assign WHERE assign.c_no_hw = #{c_no_hw} AND course.c_no = assign.c_no
+    </select>
+
+
+
+
+
+    <!--Teaching类集合 -->
+    <resultMap type="com.njfu.entity.Teaching" id="TeachingResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="class" jdbcType="VARCHAR" property="nclass"/>
+        <result column="c_no" jdbcType="VARCHAR" property="c_no"/>
+        <result column="t_id" jdbcType="VARCHAR" property="t_id"/>
+    </resultMap>
+
+    <select id="findTeachingByT_id" parameterType="String"  resultType="String">
+        SELECT name FROM teaching, course WHERE t_id = #{t_id} AND course.c_no=teaching.c_no
+    </select>
+
+    <select id="findTeachingALLByT_id" parameterType="String"  resultMap="TeachingResult">
+        SELECT * FROM teaching WHERE t_id = #{t_id}
+    </select>
+
+    <select id="findTeachingByS_id" parameterType="String"  resultMap="TeachingResult">
+        SELECT teaching.* FROM teaching, student WHERE student.s_id = #{s_id} AND student.class = teaching.class
+    </select>
+
+
+
+
+    <!--Assign类集合 -->
+    <resultMap type="com.njfu.entity.Assign" id="AssignResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="t_id" jdbcType="VARCHAR" property="t_id"/>
+        <result column="c_no" jdbcType="VARCHAR" property="c_no"/>
+        <result column="c_no_hw" jdbcType="VARCHAR" property="c_no_hw"/>
+        <result column="time" jdbcType="VARCHAR" property="time"/>
+        <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
+        <result column="msg" jdbcType="VARCHAR" property="message"/>
+        <result column="c_time" jdbcType="VARCHAR" property="c_time"/>
+    </resultMap>
+
+    <select id="findAssignByID"  parameterType="String" resultMap="AssignResult">
+        SELECT * FROM assign WHERE t_id= #{t_id}
+    </select>
+
+    <select id="findAssignByIDAndC_no"  parameterType="com.njfu.entity.Teaching" resultMap="AssignResult">
+        SELECT * FROM assign WHERE t_id = #{t_id} AND c_no = #{c_no}
+    </select>
+
+
+
+    <select id="findAssignByHW"  parameterType="String" resultMap="AssignResult">
+        SELECT * FROM assign WHERE c_no_hw= #{c_no_hw}
+    </select>
+
+    <delete id="deleteAssignHW" parameterType="INTEGER" >
+        DELETE FROM assign WHERE nid = #{nid}
+    </delete>
+
+    <insert id="addAssignHW"  parameterType="com.njfu.entity.Assign" >
+        <selectKey keyProperty="nid" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO assign (nid, t_id, c_no, c_no_hw, time, file_no, msg, c_time) VALUES (#{nid}, #{t_id}, #{c_no}, #{c_no_hw}, #{time}, #{file_no}, #{message}, #{c_time})
+    </insert>
+
+
+
+    <!--Score类集合 -->
+    <resultMap type="com.njfu.entity.Score" id="ScoreResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="s_id" jdbcType="VARCHAR" property="s_id"/>
+        <result column="c_no_hw" jdbcType="VARCHAR" property="c_no_hw"/>
+        <result column="get_score" jdbcType="VARCHAR" property="get_score"/>
+        <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
+    </resultMap>
+
+    <select id="findScoreByS_id"  parameterType="String" resultMap="ScoreResult">
+        SELECT * FROM score WHERE s_id= #{s_id}
+    </select>
+
+    <select id="findScoreByC_no_hw"  parameterType="String" resultMap="ScoreResult">
+        SELECT * FROM score WHERE c_no_hw= #{c_no_hw}
+    </select>
+
+    <select id="findScoreByClass"  parameterType="com.njfu.entity.Score" resultMap="ScoreResult">
+        SELECT * FROM score
+        <where>
+            <if test ="s_id !=null">
+                s_id= #{s_id}
+            </if>
+            <if test ="c_no_hw !=null">
+                and c_no_hw= #{c_no_hw}
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="addScoreHW"  parameterType="com.njfu.entity.Score" >
+        <selectKey keyProperty="nid" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO score (nid, s_id, c_no_hw, file_no) VALUES (#{nid}, #{s_id}, #{c_no_hw}, #{file_no})
+    </insert>
+
+    <!--All_file类集合 -->
+    <resultMap type="com.njfu.entity.All_file" id="All_fileResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="file_name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <delete id="deleteTeacherAll_file" parameterType="String" >
+        DELETE FROM all_file WHERE file_no = #{file_no}
+    </delete>
+
+    <delete id="deleteStudentAll_file" parameterType="INTEGER" >
+        DELETE FROM all_file WHERE nid = #{nid}
+    </delete>
+
+    <insert id="addTeacherAll_file"  parameterType="com.njfu.entity.All_file" >
+        <selectKey keyProperty="nid" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO all_file (nid, file_no, address, file_name) VALUES (#{nid}, #{file_no}, #{address}, #{name})
+    </insert>
+
+    <insert id="addStudentAll_file"  parameterType="com.njfu.entity.All_file" >
+        <selectKey keyProperty="nid" resultType="int" order="BEFORE">
+            select seq_on_test.NEXTVAL from dual
+        </selectKey>
+        INSERT INTO all_file (nid, file_no, address, file_name) VALUES (#{nid}, #{file_no}, #{address}, #{name})
+    </insert>
+
+    <select id="findAll_fileByFile_no"  parameterType="String"  resultType="String">
+        SELECT file_name FROM all_file WHERE file_no= #{file_no}
+    </select>
+
+    <select id="findAll_fileByFile_no_name"  parameterType="com.njfu.entity.All_file" resultMap="All_fileResult">
+        SELECT * FROM all_file WHERE file_no= #{file_no} AND file_name = #{name}
+    </select>
+
+    <select id="findAll_file_AllByAll"  parameterType="String" resultMap="All_fileResult">
+        SELECT * FROM all_file WHERE file_no= #{file_no}
+    </select>
+
+
+
+
+
+    <!--UserSimpleDTO类集合 -->
+    <resultMap type="com.njfu.DTO.UserSimpleDTO" id="UserSimpleDTOResult">
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+    </resultMap>
+
+
+
+    <select id="findStudentByAccount" parameterType="String"  resultMap="UserSimpleDTOResult">
+        SELECT * FROM student WHERE account = #{account}
+    </select>
+
+    <select id="findTeacherByAccount"  parameterType="String"  resultMap="UserSimpleDTOResult">
+        SELECT * FROM teacher WHERE account = #{account}
+    </select>
+
+    <update id="update_Student_pwd" parameterType="com.njfu.DTO.UserSimpleDTO" >
+        UPDATE student SET password = #{password}
+        WHERE account = #{account}
+    </update>
+
+    <update id="update_Teacher_pwd" parameterType="com.njfu.DTO.UserSimpleDTO" >
+        UPDATE teacher SET password = #{password}
+        WHERE account = #{account}
+    </update>
+
+    <!--Assign_ScoreResult类集合 -->
+    <resultMap type="com.njfu.DTO.Assign_Score" id="Assign_ScoreResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="t_id" jdbcType="VARCHAR" property="t_id"/>
+        <result column="c_no" jdbcType="VARCHAR" property="c_no"/>
+        <result column="c_no_hw" jdbcType="VARCHAR" property="c_no_hw"/>
+        <result column="time" jdbcType="VARCHAR" property="time"/>
+        <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
+        <result column="msg" jdbcType="VARCHAR" property="message"/>
+        <result column="c_time" jdbcType="VARCHAR" property="c_time"/>
+    </resultMap>
+
+    <select id="findAssignByIDAndC_no2"  parameterType="com.njfu.entity.Teaching" resultMap="Assign_ScoreResult">
+        SELECT * FROM assign WHERE t_id = #{t_id} AND c_no = #{c_no}
+    </select>
+
+
+    <!--Score_File类集合 -->
+    <resultMap type="com.njfu.DTO.Score_File" id="Score_FileResult">
+        <id column="nid" jdbcType="INTEGER" property="nid"/>
+        <result column="s_id" jdbcType="VARCHAR" property="s_id"/>
+        <result column="c_no_hw" jdbcType="VARCHAR" property="c_no_hw"/>
+        <result column="get_score" jdbcType="VARCHAR" property="get_score"/>
+        <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
+    </resultMap>
+
+    <select id="findScore_FileByC_no_hw"  parameterType="String" resultMap="Score_FileResult">
+        SELECT * FROM score WHERE c_no_hw= #{c_no_hw}
+    </select>
+
+
+
+
+</mapper>

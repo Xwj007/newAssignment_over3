@@ -7,6 +7,9 @@ public class UserSimpleDTO {
     private String account;
     private String password;
 
+    public UserSimpleDTO() {
+    }
+
     public UserSimpleDTO(String account, String password) {
         this.account = account;
         this.password = password;
