@@ -1,6 +1,5 @@
 package com.njfu.aspect;
 
-import com.njfu.entity.User;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;

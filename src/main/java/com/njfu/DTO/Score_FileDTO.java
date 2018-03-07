@@ -3,22 +3,24 @@ package com.njfu.DTO;
 import java.util.List;
 
 /**
- * Introduction:
+ * Introduction: 学生上传信息--文件地址信息类
  * Created by  LvXZ  on 2018/2/9.
  */
 public class Score_FileDTO {
     private String c_name;
     private String c_no_hw;
     private String message;
+    private String file_no;//文件存储编号
     private List<String> files;
 
     public Score_FileDTO() {
     }
 
-    public Score_FileDTO(String c_name, String c_no_hw, String message, List<String> files) {
+    public Score_FileDTO(String c_name, String c_no_hw, String message, String file_no, List<String> files) {
         this.c_name = c_name;
         this.c_no_hw = c_no_hw;
         this.message = message;
+        this.file_no = file_no;
         this.files = files;
     }
 
@@ -52,5 +54,13 @@ public class Score_FileDTO {
 
     public void setFiles(List<String> files) {
         this.files = files;
+    }
+
+    public String getFile_no() {
+        return file_no;
+    }
+
+    public void setFile_no(String file_no) {
+        this.file_no = file_no;
     }
 }

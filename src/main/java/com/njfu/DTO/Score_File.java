@@ -6,7 +6,7 @@ import com.njfu.entity.Score;
 import java.util.List;
 
 /**
- * Introduction:
+ * Introduction: 多条文件信息类（继承学生上传作业信息类）
  * Created by  LvXZ  on 2018/2/11.
  */
 public class Score_File extends Score {

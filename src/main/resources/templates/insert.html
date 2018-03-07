@@ -13,7 +13,7 @@
     .login-title{padding:10px;text-align:center;}
     .login-title h3{margin:0;}
     .login-box-body{background-color:white;padding:20px;}
-    #account,#password,#nclass{text-indent:10px;}
+    #id, #account,#password,#nclass{text-indent:10px;}
     .input-group{padding:16px;margin-left:auto;margin-right:auto;}
     .input-group button{width:100px;}
     .checkbox{padding-left:20px;}
@@ -28,6 +28,10 @@
                 <div><img id="top-logo" src="../static/images/logo.png"></div>
                 <div id="logo-text"><span id="logo-text-en">PRD &nbsp;Tech</span><br><span id="logo-text-cn">&nbsp;人员添加</span></div>
             <div class="login-box-body"  onsubmit="return checkForm()">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
+                    <input id="id" type="text" class="form-control" v-model="id" placeholder="ID">
+                </div>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                     <input id="account" type="text" class="form-control" v-model="account" placeholder="账号">
@@ -69,6 +73,10 @@
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function(){
+        $("#id").keydown(function(event){
+            if(event.which === 13)
+                $("#account")[0].focus();
+        });
         $("#account").keydown(function(event){
             if(event.which === 13)
                 $("#password")[0].focus();
@@ -87,13 +95,15 @@
 
 
         function userLogin() {
-            var Account, Password, Nclass, Radio;
+            var Id,Account, Password, Nclass, Radio;
+            Id = $('#id').val();
             Account = $('#account').val();
             Password = $('#password').val();
 			Nclass = $('#nclass').val();
             Radio = $('input[name="radio"]:checked').val();
 	
 			var objJson = {
+			    "id":Id,
 				"account":Account,
 				"password":Password,
 				"nclass":Nclass,
@@ -101,12 +111,11 @@
 			};
 			
 			//$.ajaxSetup({contentType: "application/json"});
-			if(Account!=null && Account!="" && Password!=null && Password!="" && Nclass!=null && Nclass!=""){
+			if( Id!=null && Id!="" &&  Account!=null && Account!="" && Password!=null && Password!="" ){
 				$.post("http://127.0.0.1:8080/insert",
 					JSON.stringify(objJson),
 					function(data) {
 					   if(data.code == 1){
-                           Cookies.set('account', Account, { expires: 7, path: '' });
 						   alert(data.msg);
 						   window.open("index.html", "_self", Account);
 					   }

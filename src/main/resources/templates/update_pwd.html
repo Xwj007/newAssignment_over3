@@ -45,6 +45,14 @@
                     <span class="input-group-addon"><i class="glyphicon glyphicon-check"></i></span>
                     <input id="en_password" type="password" class="form-control" v-model="en_password" placeholder="确认新密码">
                 </div>
+                <div class="input-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="radio" id="radio1" value="学生" checked> 学生
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="radio" id="radio2"  value="老师"> 老师
+                    </label>
+                </div>
                 <div class="input-group"><button id="login-button" onclick="userLogin()" type="submit" class="btn btn-primary">登陆</button></div>
             </div>
             </div>
@@ -89,16 +97,18 @@
 
 
         function userLogin() {
-            var Account, Old_password, New_password, En_password;
+            var Account, Old_password, New_password, En_password, Radio;
             Account = $('#account').val();
             Old_password = $('#old_password').val();
 			New_password = $('#new_password').val();
 			En_password = $('#en_password').val();
-	
+            Radio = $('input[name="radio"]:checked').val();
+
 			var objJson = {
 				"account":Account,
 				"old_password":Old_password,
 				"new_password":New_password,
+                "radio":Radio
 			};
 			
 			

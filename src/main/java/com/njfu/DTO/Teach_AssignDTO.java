@@ -5,7 +5,7 @@ import com.njfu.entity.Assign;
 import java.util.List;
 
 /**
- * Introduction:
+ * Introduction: 教师课程--布置作业信息类
  * Created by  LvXZ  on 2018/2/9.
  */
 public class Teach_AssignDTO {

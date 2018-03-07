@@ -13,7 +13,7 @@
     .login-title{padding:10px;text-align:center;}
     .login-title h3{margin:0;}
     .login-box-body{background-color:white;padding:20px;}
-    #account,#password{text-indent:10px;}
+    #id,#account,#password{text-indent:10px;}
     .input-group{padding:16px;margin-left:auto;margin-right:auto;}
     .input-group button{width:100px;}
     .checkbox{padding-left:20px;}
@@ -29,6 +29,10 @@
                 <div id="logo-text"><span id="logo-text-en">PRD &nbsp;Tech</span><br><span id="logo-text-cn">&nbsp;普瑞迪科技</span></div>
             <div class="login-box-body"  onsubmit="return checkForm()">
                 <div class="login-title"><h3>用户登录</h3></div>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input id="id" type="text" class="form-control" v-model="id" placeholder="ID">
+                </div>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                     <input id="account" type="text" class="form-control" v-model="account" placeholder="账号">
@@ -66,6 +70,10 @@
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function(){
+        $("#id").keydown(function(event){
+            if(event.which === 13)
+                $("#account")[0].focus();
+        });
         $("#account").keydown(function(event){
             if(event.which === 13)
                 $("#password")[0].focus();
@@ -78,48 +86,66 @@
 
     });
 
-
-
+//    function setCookie(name, value, iDay)
+//    {
+//        var oDate=new Date();
+//
+//        oDate.setDate(oDate.getDate()+iDay);
+//
+//        document.cookie=name+'='+encodeURIComponent(value)+';expires='+oDate;
+//    }
+//
+//    function getCookie(name)
+//    {
+//        var arr=document.cookie.split('; ');
+//        var i=0;
+//        for(i=0;i<arr.length;i++)
+//        {
+//            //arr2->['username', 'abc']
+//            var arr2=arr[i].split('=');
+//
+//            if(arr2[0]==name)
+//            {
+//                var getC = decodeURIComponent(arr2[1]);
+//                return getC;
+//            }
+//        }
+//
+//        return '';
+//    }
         function userLogin() {
-            var Account, Password, Radio;
+            var Id, Account, Password, Radio;
+            Id = $('#id').val();
             Account = $('#account').val();
             Password = $('#password').val();
             Radio = $('input[name="radio"]:checked').val();
 	
 			var objJson = {
+                "id":Id,
 				"account":Account,
 				"password":Password,
                 "radio":Radio
 			};
-			
-			
-			
-			if(Account!=null && Account!="" && Password!=null && Password!="" ){
+			if(Id!=null && Id!="" && Account!=null && Account!="" && Password!=null && Password!="" ){
 				$.post("http://127.0.0.1:8080/login",
 					JSON.stringify(objJson),
 					function(data) {
 					   if(data.code == 0){
+                           Cookies.set('id', Id,{ expires: 7, path: '' });
                            Cookies.set('account', Account, { expires: 7, path: '' });
 						   alert(Cookies.get('account'));
-						   
-						   window.open("index.html", "_self", Account);
+						   console.log(Id);
+					  window.open("index.html", "_self", Account);
 					   }
 					   else
 						   alert(data.msg);
-						//$("#login-alert").alert();
-
 					},
 					"JSON"
 				)
-			
 			}else{
 				alert("关键输入为空！");
 			}
-
         }
-
-
-
 </script>
 
 </body>

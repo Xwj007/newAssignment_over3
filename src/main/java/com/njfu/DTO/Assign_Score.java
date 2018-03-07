@@ -5,7 +5,7 @@ import com.njfu.entity.Assign;
 import java.util.List;
 
 /**
- * Introduction:
+ * Introduction: 记录布置作业（继承作业信息Assign类）--多条文件信息类
  * Created by  LvXZ  on 2018/2/11.
  */
 public class Assign_Score extends Assign{

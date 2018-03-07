@@ -5,7 +5,7 @@ import com.njfu.entity.Teaching;
 import java.util.List;
 
 /**
- * Introduction:
+ * Introduction: 记录课程--作业任务信息类
  * Created by  LvXZ  on 2018/2/11.
  */
 public class Teach_Student_FileDTO{
@@ -37,4 +37,5 @@ public class Teach_Student_FileDTO{
     public void setAssign_scores(List<Assign_Score> assign_scores) {
         this.assign_scores = assign_scores;
     }
+
 }

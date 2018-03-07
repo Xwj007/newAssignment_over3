@@ -15,6 +15,11 @@ public interface SqlMapper {
 
     List<Object> QueryStudent();
     List<Object> QueryTeacher();
+    List<Object> QueryCourse();
+    List<Object> QueryTeaching();
+    List<Object> QueryAssign();
+    List<Object> QueryScore();
+    List<Object> QueryAll_file();
 
     UserSimpleDTO findStudentByAccount(String account);
     UserSimpleDTO findTeacherByAccount(String account);
@@ -51,6 +56,7 @@ public interface SqlMapper {
 
     List<Score> findScoreByS_id(String s_id);
     String findCourseNameByOther(String c_no_hw);
+    void deleteScore(Integer nid);
 
     Score findScoreByClass(Score test);
     void deleteStudentAll_file(Integer nid);
@@ -59,7 +65,6 @@ public interface SqlMapper {
     void addScoreHW(Score test);
 
     List<Teaching> findTeachingALLByT_id(String t_id);
-    List<Score_File> findScoreByC_no_hw(String c_no_hw);
     List<All_file> findAll_file_AllByAll(String file_no);
     List<Score_File> findScore_FileByC_no_hw(String c_no_hw);
 

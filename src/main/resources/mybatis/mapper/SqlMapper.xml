@@ -80,14 +80,9 @@
         DELETE FROM teacher WHERE nid = #{nid}
     </delete>
 
-
     <select id="findTeacherNameByT_id" parameterType="String"  resultType="String">
         SELECT account FROM teacher WHERE t_id= #{t_id}
     </select>
-
-
-
-
 
 
     <!--Course类集合 -->
@@ -96,6 +91,10 @@
         <result column="c_no" jdbcType="VARCHAR" property="c_no"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
+
+    <select id="QueryCourse"  resultMap="CourseResult">
+        SELECT * FROM course
+    </select>
 
     <select id="findCourseNameByC_no" parameterType="String"  resultType="String">
         SELECT name FROM  course WHERE c_no = #{c_no}
@@ -106,9 +105,6 @@
     </select>
 
 
-
-
-
     <!--Teaching类集合 -->
     <resultMap type="com.njfu.entity.Teaching" id="TeachingResult">
         <id column="nid" jdbcType="INTEGER" property="nid"/>
@@ -117,8 +113,12 @@
         <result column="t_id" jdbcType="VARCHAR" property="t_id"/>
     </resultMap>
 
+    <select id="QueryTeaching"  resultMap="TeachingResult">
+        SELECT * FROM teaching
+    </select>
+
     <select id="findTeachingByT_id" parameterType="String"  resultType="String">
-        SELECT name FROM teaching, course WHERE t_id = #{t_id} AND course.c_no=teaching.c_no
+        SELECT course.name FROM teaching, course WHERE teaching.t_id = #{t_id} AND course.c_no=teaching.c_no
     </select>
 
     <select id="findTeachingALLByT_id" parameterType="String"  resultMap="TeachingResult">
@@ -144,6 +144,10 @@
         <result column="c_time" jdbcType="VARCHAR" property="c_time"/>
     </resultMap>
 
+    <select id="QueryAssign"  resultMap="AssignResult">
+        SELECT * FROM assign
+    </select>
+
     <select id="findAssignByID"  parameterType="String" resultMap="AssignResult">
         SELECT * FROM assign WHERE t_id= #{t_id}
     </select>
@@ -151,7 +155,6 @@
     <select id="findAssignByIDAndC_no"  parameterType="com.njfu.entity.Teaching" resultMap="AssignResult">
         SELECT * FROM assign WHERE t_id = #{t_id} AND c_no = #{c_no}
     </select>
-
 
 
     <select id="findAssignByHW"  parameterType="String" resultMap="AssignResult">
@@ -179,6 +182,10 @@
         <result column="get_score" jdbcType="VARCHAR" property="get_score"/>
         <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
     </resultMap>
+
+    <select id="QueryScore"  resultMap="ScoreResult">
+        SELECT * FROM score
+    </select>
 
     <select id="findScoreByS_id"  parameterType="String" resultMap="ScoreResult">
         SELECT * FROM score WHERE s_id= #{s_id}
@@ -208,6 +215,10 @@
         INSERT INTO score (nid, s_id, c_no_hw, file_no) VALUES (#{nid}, #{s_id}, #{c_no_hw}, #{file_no})
     </insert>
 
+    <delete id="deleteScore" parameterType="INTEGER" >
+        DELETE FROM score WHERE nid = #{nid}
+    </delete>
+
     <!--All_file类集合 -->
     <resultMap type="com.njfu.entity.All_file" id="All_fileResult">
         <id column="nid" jdbcType="INTEGER" property="nid"/>
@@ -215,6 +226,10 @@
         <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="file_name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
+
+    <select id="QueryAll_file"  resultMap="All_fileResult">
+        SELECT * FROM all_file
+    </select>
 
     <delete id="deleteTeacherAll_file" parameterType="String" >
         DELETE FROM all_file WHERE file_no = #{file_no}
