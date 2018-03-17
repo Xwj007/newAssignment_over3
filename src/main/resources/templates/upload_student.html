@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="../static/materialize/css/materialize.min.css" media="screen,projection">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+
+    <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <title>学生界面</title>
+    <style>
+        #user_name,#user_id{
+            width: 80px;/*宽度*/
+            text-align: center;/*水平居中*/
+            border: none;/*划线*/
+            font-size: 15px;/*字体大小*/
+            color: #0f0f0f;/*颜色*/
+            font-weight: bold;/*加粗*/
+        }
+
+        #logo-text-en{
+            font-size: 7px;
+            color: #ffffff;
+        }
+
+        #logo-title{
+            color: #ffffff;
+            vertical-align: text-top;/*垂直居中*/
+        }
+
+        #btn-upload{
+            font-size: 14px;
+            font-weight: normal;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+<body onload="jumpLogin()" style="background-color:#3e2723;">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-4 column pull-left" id="logo-title">
+                    <h1>
+                        学生管理界面
+                    </h1>
+                </div>
+                <div class="col-md-2 column pull-right">
+                    <div>
+                        <img id="top-logo" src="../static/images/logo.png">
+                        <span id="logo-text-en">PRD &nbsp;Tech</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-pills">
+                <li>
+                    <a href="index_student.html">首页</a>
+                </li>
+                <li>
+                    <a href="download_student.html">下载作业</a>
+                </li>
+                <li  class="active">
+                    <a href="upload_student.html">上传作业</a>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_name" value="未登录" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_id" value="" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right disabled">
+                    <a href="#"></a>
+                </li>
+                <li class="dropdown pull-right">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">个人设置<strong class="caret"></strong></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">修改信息</a>
+                        </li>
+                        <li>
+                            <a href="update_pwd.html">修改密码</a>
+                        </li>
+                        <li class="divider">
+                        </li>
+                        <li>
+                            <a onclick="deleteCookies()">退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-8 column">
+            <div class="jumbotron">
+                <aaa>
+
+                </aaa>
+            </div>
+        </div>
+        <div class="col-md-4 column">
+            <make_form>
+
+            </make_form>
+        </div>
+    </div>
+
+</div>
+
+<!--JavaScript below-->
+<script src="../static/js/jquery-3.2.1.min.js"></script>
+<script src="../static/materialize/js/materialize.min.js"></script>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="./constant.js"></script>
+<script src="../static/js/jquery.form.min.js" crossorigin="anonymous"></script>
+
+<script>
+
+    /*网页生成时，验证是否登录的跳传*/
+    function jumpLogin() {
+        if(!Cookies.get('id')){
+            alert("您还未登陆！请登陆");
+            window.open('login.html','_self');
+        }
+        getUser();
+        makeForm();
+        getUpload_Info();
+        getDownload_Info();
+    }
+
+    <!-- 获取登录信息，并修改登录栏-->
+    function getUser(){
+        $('#user_name').val(Cookies.get('account'));
+        $('#user_id').val(Cookies.get('id'));
+    }
+
+    <!-- 推出登录，删除存储的cookies-->
+    function deleteCookies() {
+        Cookies.remove('id', { path: '' });
+        Cookies.remove('account', { path: '' });
+        window.open('login.html','_self');
+    }
+
+    <!-- 生成学生之前上传作业的表格-->
+    function getTable_Info(data){
+        var $table=$('<table class="table table-bordered table-condensed"></table>');
+        $("aaa").append($table);
+
+        var $thead=$('<thead></thead>');
+        var $trs=$('<tr class="info"></tr>');
+        var $th1=$('<th>课程</th>');
+        var $th2=$('<th>课程编码</th>');
+        var $th3=$('<th>作业内容</th>');
+        var $th4=$('<th>文件名称</th>');
+        var $th5=$('<th>是否删除</th>');
+        var $tbody=$('<tbody></tbody>');
+        $trs.append($th1);
+        $trs.append($th2);
+        $trs.append($th3);
+        $trs.append($th4);
+        $trs.append($th5);
+        $thead.append($trs);
+        $table.append($thead);
+        $table.append($tbody);
+
+        var count = 0;
+        for(var i=0;i<data.length;i++){
+            for (var x = 0; x <data[i].files.length; x++) {
+
+                if(count%2==0){
+                    var $tr=$('<tr></tr>');
+                }else{
+                    var $tr=$('<tr class="success"></tr>');
+                }
+                $table.append($tr);
+
+                var $td1=$('<td>'+data[i].c_name+'</td>');
+                $tr.append($td1);
+                var $td2=$('<td>'+data[i].c_no_hw+'</td>');
+                $tr.append($td2);
+                var $td3=$('<td>'+data[i].message+'</td>');
+                $tr.append($td3);
+                var $td4=$('<td>'+data[i].files[x]+'</td>');
+                $tr.append($td4);
+                var $td5=$('<td>' +
+                    '<button id="'+ data[i].c_no_hw +'" name="'+data[i].files[x]+'" onclick="student_delete(this);location.reload()" type="submit" class="btn btn-small btn-warning">' +
+                    '<i class="glyphicon glyphicon-remove">删除</i>' +
+                    '</button></td>');
+                $tr.append($td5);
+
+                count++;
+            }
+        }
+
+    }
+
+    <!--上传文件form表单生成函数-->
+    function makeForm(){
+        var $form=$('<form id="form1" role="form" method="POST" enctype="multipart/form-data" action="http://'+ getLocalIP()+':8080/student_upload"></form>');
+        $("make_form").append($form);
+
+        var $panel=$('<div class="jumbotron"></div>');
+
+        var $panel1=$('<div class="input-group"></div>');
+        var $span=$('<span class="input-group-addon"><i class="glyphicon glyphicon-hand-right"></i></span>');
+        var $span2=$('<bbb></bbb>');
+        var $span3=$('<input type="hidden" id="s_id" name="s_id" value="'+ Cookies.get('id')+'"/>');
+        $panel1.append($span);
+        $panel1.append($span2);
+        $panel1.append($span3);
+
+        var $panel2=$('<div class="form-group"><label for="file"> &nbsp;</label>' +
+            '<input name="file" id="file" type="file" multiple/></div>');
+        var $panel3=$('<div class="input-group" style="padding:16px;margin-left:auto;margin-right:auto;">' +
+            '<button type="submit" class="btn btn-info" id="btn-upload" onclick="testUpload()">' +
+            '<i class="glyphicon glyphicon-cloud-upload">上传</i></button></div>');
+
+        $panel.append($panel1);
+        $panel.append($panel2);
+        $panel.append($panel3);
+        $form.append($panel);
+    }
+
+    <!-- 上传文件表单，后端返回的信息处理-->
+    function testUpload(){
+        $("#form1").ajaxForm(function(data){
+            if(data.code==6){
+                alert(data.msg);
+                location.reload();//重新加载
+            }
+        });
+    }
+
+    <!--获取自己上传的作业-->
+    function getUpload_Info() {
+        var S_id= Cookies.get('id');
+        console.log(S_id);
+        var objJson = {
+            "s_id": S_id
+        };
+        if(S_id!=null && S_id!=""){
+            $.post("http://"+ getLocalIP() +":8080/student_help_upload",
+                JSON.stringify(objJson),
+                function(data) {
+                    if(data.length==0){
+                        alert("您未上传作业！")
+                    }else {
+                        console.log(data);
+                        getTable_Info(data);
+                    }
+                },
+                "JSON"
+            )
+        }else{
+            alert("未登录！");
+        }
+    }
+
+
+    <!--学生删除自己上传作业的记录-->
+    function student_delete(obj) {
+        var S_id=Cookies.get('id');
+        var C_no_hw =obj.id;
+        var File_name =obj.name;
+
+        var objJson = {
+            "s_id":S_id,
+            "c_no_hw":C_no_hw,
+            "file_name":File_name
+        };
+        $.post("http://"+ getLocalIP() +":8080/student_delete_file",
+            JSON.stringify(objJson),
+            function(data) {
+                if(data.code==8){
+                    alert(data.msg);
+                    location.reload();//重新加载
+                }
+                else{
+                    alert(data.msg);
+                }
+            },
+            "JSON"
+        )
+    }
+
+    <!--获取老师布置的作业，以便上传作业选择-->
+    function getDownload_Info() {
+        var Account=Cookies.get('account');
+        var Id=Cookies.get('id');
+
+        var objJson = {
+            "account":Account,
+            "id":Id
+        };
+        if(Account!=null && Account!=""){
+            $.post("http://"+ getLocalIP() +":8080/getT_Homework",
+                JSON.stringify(objJson),
+                function(data) {
+                    if(data.length==0){
+                        alert("无老师上传作业！");
+                    }else {
+                        console.log(data);
+                        getSelect_Info(data);
+                    }
+                },
+                "JSON"
+            )
+        }else{
+            alert("未登录！");
+        }
+    }
+
+    <!--生成老师任务的下拉列表，以便上传作业选择-->
+    function getSelect_Info(data) {
+        var $select=$('<select class="form-control" name="c_no_hw"  id="c_no_hw"></select>');
+        $("bbb").append($select);
+        var $op0=$('<option>作业任务请选择</option>');
+        $select.append($op0);
+        for(var i=0;i<data.length;i++){
+            for (var x = 0; x < data[i].assigns.length; x++) {
+                for(var j=0;j<data[i].assigns[x].files.length;j++){
+
+                    var $op1=$('<option value="'+data[i].assigns[x]['file_no']+'">'+data[i].assigns[x]['message']+'</option>');
+                    $select.append($op1);
+                }
+            }
+        }
+    }
+
+
+</script>
+</body>
+</html>

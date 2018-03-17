@@ -104,6 +104,10 @@
         SELECT course.name FROM  course,assign WHERE assign.c_no_hw = #{c_no_hw} AND course.c_no = assign.c_no
     </select>
 
+    <select id="findCourseByT_id" parameterType="String"  resultMap="CourseResult">
+        SELECT course.* FROM teaching, course WHERE teaching.t_id = #{t_id} AND course.c_no=teaching.c_no
+    </select>
+
 
     <!--Teaching类集合 -->
     <resultMap type="com.njfu.entity.Teaching" id="TeachingResult">
@@ -187,6 +191,11 @@
         SELECT * FROM score
     </select>
 
+
+    <update id="setScoreGet_score" parameterType="com.njfu.entity.Score">
+        UPDATE score SET get_score= #{get_score} WHERE s_id= #{s_id} AND c_no_hw= #{c_no_hw}
+    </update>
+
     <select id="findScoreByS_id"  parameterType="String" resultMap="ScoreResult">
         SELECT * FROM score WHERE s_id= #{s_id}
     </select>
@@ -225,6 +234,7 @@
         <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
         <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="file_name" jdbcType="VARCHAR" property="name"/>
+        <result column="file_url" jdbcType="VARCHAR" property="file_url"/>
     </resultMap>
 
     <select id="QueryAll_file"  resultMap="All_fileResult">
@@ -243,14 +253,14 @@
         <selectKey keyProperty="nid" resultType="int" order="BEFORE">
             select seq_on_test.NEXTVAL from dual
         </selectKey>
-        INSERT INTO all_file (nid, file_no, address, file_name) VALUES (#{nid}, #{file_no}, #{address}, #{name})
+        INSERT INTO all_file (nid, file_no, address, file_name, file_url) VALUES (#{nid}, #{file_no}, #{address}, #{name}, #{file_url})
     </insert>
 
     <insert id="addStudentAll_file"  parameterType="com.njfu.entity.All_file" >
         <selectKey keyProperty="nid" resultType="int" order="BEFORE">
             select seq_on_test.NEXTVAL from dual
         </selectKey>
-        INSERT INTO all_file (nid, file_no, address, file_name) VALUES (#{nid}, #{file_no}, #{address}, #{name})
+        INSERT INTO all_file (nid, file_no, address, file_name, file_url) VALUES (#{nid}, #{file_no}, #{address}, #{name}, #{file_url})
     </insert>
 
     <select id="findAll_fileByFile_no"  parameterType="String"  resultType="String">

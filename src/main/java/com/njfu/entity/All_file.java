@@ -8,16 +8,18 @@ public class All_file {
 
     private Integer nid;
     private String file_no;     //文件存储编号
-    private String address;     //文件地址
+    private String address;     //文件绝对地址
     private String name;
+    private String file_url;    //文件相对地址
 
     public All_file() {
     }
 
-    public All_file(String file_no, String address, String name) {
+    public All_file(String file_no, String address, String name, String file_url) {
         this.file_no = file_no;
         this.address = address;
         this.name = name;
+        this.file_url = file_url;
     }
 
     public Integer getNid() {
@@ -52,6 +54,14 @@ public class All_file {
         this.name = name;
     }
 
+    public String getFile_url() {
+        return file_url;
+    }
+
+    public void setFile_url(String file_url) {
+        this.file_url = file_url;
+    }
+
     @Override
     public String toString() {
         return "All_file{" +
@@ -59,6 +69,7 @@ public class All_file {
                 ", file_no='" + file_no + '\'' +
                 ", address='" + address + '\'' +
                 ", name='" + name + '\'' +
+                ", file_url='" + file_url + '\'' +
                 '}';
     }
 }

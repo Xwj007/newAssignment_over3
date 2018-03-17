@@ -5,6 +5,25 @@
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
     <style>
+
+        @font-face {
+            font-family: 'iconfont';  /* project id 586981 */
+            src: url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.eot');
+            src: url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.eot?#iefix') format('embedded-opentype'),
+            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.woff') format('woff'),
+            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.ttf') format('truetype'),
+            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.svg#iconfont') format('svg');
+        }
+        .iconfont {/*对阿里图标进行修饰*/
+            /*color: #c12e2a;*/
+            font-family:"iconfont" !important;
+            font-style:normal;
+            font-weight: bold;/*加粗*/
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+
     .login-box{max-width:400px;margin:5% auto;padding:20px;}
     #top-logo{width:90px;height:90px;float:left;margin:10px 30px 10px 10px;}
     #logo-text{margin:20px;color:rgb(50,150,230);}
@@ -27,10 +46,10 @@
             <div class="login-box">
                 <div><img id="top-logo" src="../static/images/logo.png"></div>
                 <div id="logo-text"><span id="logo-text-en">PRD &nbsp;Tech</span><br><span id="logo-text-cn">&nbsp;普瑞迪科技</span></div>
-            <div class="login-box-body"  onsubmit="return checkForm()">
+            <div class="login-box-body">
                 <div class="login-title"><h3>用户登录</h3></div>
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <span class="input-group-addon"><i class="iconfont">&#xe611;</i></span>
                     <input id="id" type="text" class="form-control" v-model="id" placeholder="ID">
                 </div>
                 <div class="input-group">
@@ -43,10 +62,10 @@
                 </div>
                 <div class="input-group">
                     <label class="radio-inline">
-                        <input type="radio" name="radio" id="radio1" value="学生" checked> 学生
+                        <input type="radio" name="radio" id="radio1" value="student" checked> 学生
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="radio" id="radio2"  value="老师"> 老师
+                        <input type="radio" name="radio" id="radio2"  value="teacher"> 老师
                     </label>
                 </div>
                 <div class="input-group"><button id="login-button" onclick="userLogin()" type="submit" class="btn btn-primary">登陆</button></div>
@@ -68,6 +87,7 @@
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/js/vue.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="./constant.js"></script>
 <script>
     $(document).ready(function(){
         $("#id").keydown(function(event){
@@ -81,38 +101,10 @@
         $("#password").keydown(function(event){
             if(event.which === 13)
                 $("#login-button").click(userLogin());
-
         });
 
     });
 
-//    function setCookie(name, value, iDay)
-//    {
-//        var oDate=new Date();
-//
-//        oDate.setDate(oDate.getDate()+iDay);
-//
-//        document.cookie=name+'='+encodeURIComponent(value)+';expires='+oDate;
-//    }
-//
-//    function getCookie(name)
-//    {
-//        var arr=document.cookie.split('; ');
-//        var i=0;
-//        for(i=0;i<arr.length;i++)
-//        {
-//            //arr2->['username', 'abc']
-//            var arr2=arr[i].split('=');
-//
-//            if(arr2[0]==name)
-//            {
-//                var getC = decodeURIComponent(arr2[1]);
-//                return getC;
-//            }
-//        }
-//
-//        return '';
-//    }
         function userLogin() {
             var Id, Account, Password, Radio;
             Id = $('#id').val();
@@ -126,16 +118,20 @@
 				"password":Password,
                 "radio":Radio
 			};
+			//alert(getLocalIP());
 			if(Id!=null && Id!="" && Account!=null && Account!="" && Password!=null && Password!="" ){
-				$.post("http://127.0.0.1:8080/login",
+			    $.post("http://"+ getLocalIP() +":8080/login",
 					JSON.stringify(objJson),
 					function(data) {
 					   if(data.code == 0){
-                           Cookies.set('id', Id,{ expires: 7, path: '' });
-                           Cookies.set('account', Account, { expires: 7, path: '' });
-						   alert(Cookies.get('account'));
-						   console.log(Id);
-					  window.open("index.html", "_self", Account);
+                            Cookies.set('id', Id,{ expires: 7, path: '' });
+                            Cookies.set('account', Account, { expires: 7, path: '' });
+						    alert(Cookies.get('account'));
+						    if(Radio == "student"){
+                                window.open("index_student.html", "_self", Account);
+                            }else{
+                                window.open("index_teacher.html", "_self", Account);
+                            }
 					   }
 					   else
 						   alert(data.msg);

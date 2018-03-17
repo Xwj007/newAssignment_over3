@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+
+    <link rel="stylesheet" href="../static/materialize/css/materialize.min.css" media="screen,projection">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+
+    <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <title>学生界面</title>
+    <style>
+        #user_name,#user_id{
+            width: 80px;/*宽度*/
+            text-align: center;/*水平居中*/
+            border: none;/*划线*/
+            font-size: 15px;/*字体大小*/
+            color: #0f0f0f;/*颜色*/
+            font-weight: bold;/*加粗*/
+        }
+
+        #logo-text-en{
+            font-size: 7px;
+            color: #ffffff;
+        }
+
+        #logo-title{
+            color: #ffffff;
+            vertical-align: text-top;/*垂直居中*/
+        }
+    </style>
+
+</head>
+
+<body onload="jumpLogin()" style="background-color:#3e2723;">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-4 column pull-left" id="logo-title">
+            <h1>
+                学生管理界面
+            </h1>
+        </div>
+        <div class="col-md-2 column pull-right">
+            <div>
+                <img id="top-logo" src="../static/images/logo.png">
+                <span id="logo-text-en">PRD &nbsp;Tech</span>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix" >
+        <div class="col-md-12 column">
+            <ul class="nav nav-pills">
+                <li class="active">
+                    <a href="#">首页</a>
+                </li>
+                <li>
+                    <a href="download_student.html">下载作业</a>
+                </li>
+                <li>
+                    <a href="upload_student.html">上传作业</a>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_name" value="未登录" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_id" value="" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right disabled">
+                    <a href="#"></a>
+                </li>
+                <li class="dropdown pull-right">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">个人设置<strong class="caret"></strong></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">修改信息</a>
+                        </li>
+                        <li>
+                            <a href="update_pwd.html">修改密码</a>
+                        </li>
+                        <li class="divider">
+                        </li>
+                        <li>
+                            <a onclick="deleteCookies()">退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="row clearfix">
+        <div class="col-md-2 column">
+        </div>
+        <div class="col-md-8 column">
+            <div class="jumbotron">
+                <h1>
+                    PRD Tech
+                </h1>
+                <p>
+                    Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+                </p>
+                <p>
+                    <a class="btn" href="#">View details »</a>
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2 column">
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--JavaScript below-->
+<script src="../static/js/jquery-3.2.1.min.js"></script>
+<script src="../static/materialize/js/materialize.min.js"></script>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/bootstrap/js/bootstrap.min.js"></script>
+
+<script>
+    <!--跳转-->
+    function jumpLogin() {
+        if(!Cookies.get('id')){
+            alert("您还未登陆！请登陆");
+            window.open('login.html','_self');
+        }
+        getUser();
+    }
+
+    function getUser(){
+
+        $('#user_name').val(Cookies.get('account'));
+        $('#user_id').val(Cookies.get('id'));
+
+    }
+
+    function deleteCookies() {
+        //alert(Cookies.get('id'));
+        Cookies.remove('id', { path: '' });
+        Cookies.remove('account', { path: '' });
+        //alert(Cookies.get('id'));
+        window.open('login.html','_self');
+
+    }
+
+</script>
+</body>
+</html>

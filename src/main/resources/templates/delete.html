@@ -5,6 +5,23 @@
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
     <style>
+
+        @font-face {
+            font-family: 'iconfont';  /* project id 586981 */
+            src: url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.eot');
+            src: url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.eot?#iefix') format('embedded-opentype'),
+            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.woff') format('woff'),
+            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.ttf') format('truetype'),
+            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.svg#iconfont') format('svg');
+        }
+        .iconfont {/*对阿里图标进行修饰*/
+            /*color: #c12e2a;*/
+            font-family:"iconfont" !important;
+            font-style:normal;
+            font-weight: bold;/*加粗*/
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
     .login-box{max-width:400px;margin:5% auto;padding:20px;}
     #top-logo{width:90px;height:90px;float:left;margin:10px 30px 10px 10px;}
     #logo-text{margin:20px;color:rgb(50,150,230);}
@@ -20,7 +37,7 @@
     #login-alert{display:none;}
     </style>
 </head>
-<body style="background-color:#3e2723;">
+<body onload="jumpLogin()" style="background-color:#3e2723;">
 <div class="container" >
     <div class="row">
         <div class="col-xs-12">
@@ -30,7 +47,7 @@
             <div class="login-box-body"  onsubmit="return checkForm()">
                 <div class="login-title"><h3>人员删除</h3></div>
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
+                    <span class="input-group-addon"><i class="iconfont">&#xe611;</i></span>
                     <input id="id" type="text" class="form-control" v-model="id" placeholder="ID">
                 </div>
                 <div class="input-group">
@@ -65,6 +82,15 @@
 <script src="../static/js/vue.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script>
+    <!--跳转-->
+    function jumpLogin() {
+        if(!Cookies.get('id')){
+            alert("您还未登陆！请登陆")
+            window.open('login.html','_self');
+        }else {
+            t_hw();
+        }
+    }
     $(document).ready(function(){
         $("#id").keydown(function(event){
             if(event.which === 13)
@@ -82,8 +108,6 @@
 
     });
 
-
-
         function userLogin() {
             var Id, Account, Radio;
             Id = $('#id').val();
@@ -100,7 +124,7 @@
 			
 			//$.ajaxSetup({contentType: "application/json"});
 			if(Id!=null && Id!="" &&  Account!=null && Account!="" ){
-				$.post("http://127.0.0.1:8080/delete",
+				$.post("http://192.168.1.106:8080/delete",
 					JSON.stringify(objJson),
 					function(data) {
 					   if(data.code == 2){

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="../static/materialize/css/materialize.min.css" media="screen,projection">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+
+    <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <title>老师界面</title>
+    <style>
+        #user_name,#user_id{
+            width: 80px;/*宽度*/
+            text-align: center;/*水平居中*/
+            border: none;/*划线*/
+            font-size: 15px;/*字体大小*/
+            color: #0f0f0f;/*颜色*/
+            font-weight: bold;/*加粗*/
+        }
+
+        #logo-text-en{
+            font-size: 7px;
+            color: #ffffff;
+        }
+
+        #logo-title{
+            color: #ffffff;
+            vertical-align: text-top;/*垂直居中*/
+        }
+    </style>
+
+</head>
+
+<body onload="jumpLogin()" style="background-color:#3e2723;">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-4 column pull-left" id="logo-title">
+                    <h1>
+                        老师管理界面
+                    </h1>
+                </div>
+                <div class="col-md-2 column pull-right">
+                    <div>
+                        <img id="top-logo" src="../static/images/logo.png">
+                        <span id="logo-text-en">PRD &nbsp;Tech</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-pills">
+                <li>
+                    <a href="index_student.html">首页</a>
+                </li>
+                <li>
+                    <a href="upload_teacher.html">布置作业</a>
+                </li>
+                <li  class="active">
+                    <a href="download_teacher.html">审批作业</a>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_name" value="未登录" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_id" value="" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right disabled">
+                    <a href="#"></a>
+                </li>
+                <li class="dropdown pull-right">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">个人设置<strong class="caret"></strong></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">修改信息</a>
+                        </li>
+                        <li>
+                            <a href="update_pwd.html">修改密码</a>
+                        </li>
+                        <li class="divider">
+                        </li>
+                        <li>
+                            <a onclick="deleteCookies()">退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-1 column">
+        </div>
+        <div class="col-md-10 column">
+            <div class="jumbotron">
+                <aaa>
+
+                </aaa>
+            </div>
+        </div>
+        <div class="col-md-1 column">
+            <div class="modal fade " id="modal-container-287808" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="background: none">
+                <div class="modal-dialog" role="document" style="width: 350px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                正在评价......
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                <select class="form-control" name="select_level"  id="select_level">
+                                    <option>----请选择等第----</option>
+                                    <option>优</option>
+                                    <option>良</option>
+                                    <option>及格</option>
+                                    <option>不及格</option>
+                                </select>
+                            </div>
+                            <ccc>
+
+                            </ccc>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button onclick="true_evaluate(this)" type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--JavaScript below-->
+<script src="../static/js/jquery-3.2.1.min.js"></script>
+<script src="../static/materialize/js/materialize.min.js"></script>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="./constant.js"></script>
+
+<script>
+
+    /*网页生成时，验证是否登录的跳传*/
+    function jumpLogin() {
+        if(!Cookies.get('id')){
+            alert("您还未登陆！请登陆");
+            window.open('login.html','_self');
+        }
+        getUser();
+        getDownload_Info();
+    }
+
+    <!-- 获取登录信息，并修改登录栏-->
+    function getUser(){
+        $('#user_name').val(Cookies.get('account'));
+        $('#user_id').val(Cookies.get('id'));
+    }
+
+    <!-- 推出登录，删除存储的cookies-->
+    function deleteCookies() {
+        Cookies.remove('id', { path: '' });
+        Cookies.remove('account', { path: '' });
+        window.open('login.html','_self');
+    }
+
+    <!-- 生成学生之前上传作业的表格-->
+    function getTable_Info(data){
+
+        var $table=$('<table class="table table-bordered table-condensed"></table>');
+        $("aaa").append($table);
+
+        var $thead=$('<thead></thead>');
+        var $trs=$('<tr class="info"></tr>');
+        var $th1=$('<th>课程</th>');
+        var $th2=$('<th>作业介绍</th>');
+        var $th3=$('<th>学生学号</th>');
+        var $th4=$('<th>文件编码</th>');
+        var $th5=$('<th>文件名</th>');
+        var $th555=$('<th>评价等级</th>');
+        var $th6=$('<th>是否下载</th>');
+        var $tbody=$('<tbody></tbody>');
+        $trs.append($th1);
+        $trs.append($th2);
+        $trs.append($th3);
+        $trs.append($th4);
+        $trs.append($th5);
+        $trs.append($th555);
+        $trs.append($th6);
+        $thead.append($trs);
+        $table.append($thead);
+        $table.append($tbody);
+
+        var count = 0;//表格颜色控制
+        for(var i=0;i<data.length;i++) {
+            for (var x = 0; x < data[i].assign_scores.length; x++) {
+                for (var j = 0; j < data[i].assign_scores[x]['score_files'].length; j++) {
+                    for (var k = 0; k < data[i].assign_scores[x]['score_files'][j].all_files.length; k++) {
+
+                        if (count % 2 == 0) {
+                            var $tr = $('<tr></tr>');
+                        } else {
+                            var $tr = $('<tr class="success"></tr>');
+                        }
+                        $table.append($tr);
+
+                        var $td1 = $('<td>' + data[i].c_name + '</td>');
+                        $tr.append($td1);
+                        var $td2 = $('<td>' + data[i].assign_scores[x]['message'] + '</td>');
+                        $tr.append($td2);
+                        var $td3 = $('<td>' + data[i].assign_scores[x]['score_files'][j].s_id + '</td>');
+                        $tr.append($td3);
+                        var $td4 = $('<td>' + data[i].assign_scores[x]['score_files'][j].file_no + '</td>');
+                        $tr.append($td4);
+                        var $td5 = $('<td>' + data[i].assign_scores[x]['score_files'][j].all_files[k].name + '</td>');
+                        $tr.append($td5);
+                        var $td555 = $('<td><label>' + testGet_score(data[i].assign_scores[x]['score_files'][j].get_score) + ' &nbsp;</label>' +
+                            '<button id="' + data[i].assign_scores[x]['score_files'][j].s_id + '"  name="' + data[i].assign_scores[x]['score_files'][j].c_no_hw + '" onclick="make_evaluate(this)" class="btn btn-small btn-info pull-right" href="#modal-container-287808" data-toggle="modal">' +
+                            '<i class="glyphicon glyphicon-pencil">评价</i>' +
+                            '</button></td>');
+                        $tr.append($td555);
+                        var $td6 = $('<td>' +
+                            '<button id="' + data[i].assign_scores[x]['score_files'][j].file_no + '" name="' + data[i].assign_scores[x]['score_files'][j].all_files[k].name + '" onclick="Start_Download(this)" type="submit" class="btn btn-small btn-warning">' +
+                            '<i class="glyphicon glyphicon-download-alt">下载</i>' +
+                            '</button></td>');
+                        $tr.append($td6);
+
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    function testGet_score(getScore) {
+        if(getScore == null || getScore==""){
+            return "未评价";
+        }
+        return getScore;
+    }
+
+    <!--老师评价学生作业-->
+    function true_evaluate(obj){
+        var S_id = $('#s_id').val();
+        var C_no_hw = $('#c_no_hw').val();
+        var Get_score = $('#select_level').val();
+
+        var objJson = {
+            "s_id":S_id,
+            "c_no_hw":C_no_hw,
+            "get_score":Get_score
+        };
+        console.log(objJson);
+        if(Get_score!=null && Get_score!="" && Get_score!="----请选择等第----"){
+            $.post("http://"+ getLocalIP() +":8080/teacher_evaluate",
+                JSON.stringify(objJson),
+                function(data) {
+                    if(data.code==12){
+                        console.log(data);
+                        location.reload();//重新加载
+                    }else {
+                        alert(data.msg);
+                    }
+                },
+                "JSON"
+            )
+        }else{
+            alert("未评价");
+        }
+    }
+
+    <!--保存对象到评分提示框-->
+    function make_evaluate(obj) {
+
+        var $div=$('<div></div>');
+        $("ccc").append($div);
+
+        var $S_id=$('<input type="hidden" id="s_id" name="s_id" value="'+ obj.id+'"/>');
+        var $C_no_hw=$('<input type="hidden" id="c_no_hw" name="c_no_hw" value="'+ obj.name+'"/>');
+        $div.append($S_id);
+        $div.append($C_no_hw);
+    }
+
+    <!--老师获取学生作业信息记录-->
+    function getDownload_Info() {
+        var T_id=Cookies.get('id');
+        console.log(T_id);
+        var objJson = {
+            "t_id":T_id
+        };
+        if(T_id!=null && T_id!=""){
+            $.post("http://"+ getLocalIP() +":8080/getS_Homework",
+                JSON.stringify(objJson),
+                function(data) {
+                    if(data.length==0){
+                        alert("无学生上传作业！")
+                    }else {
+                        console.log(data);
+                        getTable_Info(data);
+                    }
+                },
+                "JSON"
+            )
+        }else{
+            alert("未登录！");
+        }
+    }
+
+    <!-- 获取文件下载链接，准备下载-->
+    function Start_Download(obj) {
+
+        var File_no=obj.id;
+        var File_name=obj.name;
+        console.log(obj.id);
+        console.log(obj.name);
+        var objJson = {
+            "file_no":File_no,
+            "file_name":File_name
+        };
+        console.log(typeof(File_no));
+        $.post("http://"+ getLocalIP() +":8080/teacher_student_download",
+            JSON.stringify(objJson),
+            function(data) {
+                if(data.code==7){
+                    alert(data.msg);
+                    downloadFile(data.data,File_name);
+                }else{
+                    console.log(data);
+                    alert(data.msg);
+                }
+            },
+            "JSON"
+        )
+    }
+
+    <!-- 真正下载-->
+    //会打开一个空白页下载，然后空白页消失，用户体验不好
+    function downloadFile(url,file_name) {
+        var newURL = "http://"+ getLocalIP() +":8081/download/" + url;
+        console.log(newURL);
+        const a = document.createElement('a');
+        a.setAttribute('href', newURL);
+        a.setAttribute('download', file_name);
+        a.click();
+    }
+
+</script>
+</body>
+</html>

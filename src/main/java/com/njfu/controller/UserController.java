@@ -110,7 +110,7 @@ public class UserController {
 
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
         ResponseInfoDTO responseInfoDTO;
-        if(radio.equals("学生")){
+        if(radio.equals("student")){
             Student oldStudent = new Student(id, account, password, null);
             Student newStudent = sqlMapper.findStudentByOther(oldStudent);//调用student数据库
 
@@ -277,10 +277,13 @@ public class UserController {
 
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
         ResponseInfoDTO responseInfoDTO;
-        if(assigns == null ){
-            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("teacher.help.upload.failure.code")), PropertiesUtil.getProperty("老师没有作业"),null);
+        if(assigns.size() == 0 ){
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("teacher.help.upload.failure.code")), PropertiesUtil.getProperty("teacher.help.upload.failure.msg"),null);
         }else{
-            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("teacher.help.upload.success.code")), PropertiesUtil.getProperty("老师作业已接收"),assigns);
+            for(Assign aa:assigns){
+                aa.setC_no(sqlMapper.findCourseNameByC_no(aa.getC_no()));//为了方便，将c_no的位置，放置课程名
+            }
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("teacher.help.upload.success.code")), PropertiesUtil.getProperty("teacher.help.upload.success.msg"),assigns);
         }
         return responseInfoDTO;
     }
@@ -313,20 +316,24 @@ public class UserController {
     /**老师文件上传前，获取老师教授课程，以便选择课程上传文件**/
     @PostMapping(value = "/teacher_get_teaching",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<Assign> teacher_get_teaching(@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<Course> teacher_get_teaching(@RequestBody String params, HttpServletRequest request,
                                                        HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode paramJson = objectMapper.readTree(params);
         String t_id = paramJson.get("t_id").textValue();
 
-        List<String> course_name = sqlMapper.findTeachingByT_id(t_id);
+        List<Course> courses = sqlMapper.findCourseByT_id(t_id);
+
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
         ResponseInfoDTO responseInfoDTO;
-        if(course_name == null ){
+        if(courses.size()==0 ){
             responseInfoDTO = new ResponseInfoDTO(-11, "老师没有授课",null);
         }else{
-            responseInfoDTO = new ResponseInfoDTO(11, "老师授课信息已接收",course_name);
+            for(Course c:courses){
+                c.toString();
+            }
+            responseInfoDTO = new ResponseInfoDTO(11, "老师授课信息已接收",courses);
         }
         return responseInfoDTO;
     }
@@ -349,15 +356,25 @@ public class UserController {
         DateFormat format= new SimpleDateFormat("yyyyMMdd");
         String create_time = format.format(date);
         Assign assign = new Assign( t_id, c_no, c_no_hw, time, file_no, message, create_time);//初始化对象
+        //当前判断任务是否已经存在
+        Assign testAssign = sqlMapper.findAssignByHW(c_no_hw);
 
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
         ResponseInfoDTO responseInfoDTO;
+        if(testAssign != null){
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(
+                    PropertiesUtil.getProperty("upload.file.failure_5.code")),
+                    PropertiesUtil.getProperty("upload.file.failure_5.msg"),null);
+            return responseInfoDTO;
+        }
+
 
         MultipartFile file = null;
         BufferedOutputStream stream = null;
 
-        //设置保存路径D:/aim/课程/老师/课程开课/老师作业文件
-        String filePath = "D://aim//" +c_no+ "//" +t_id+ "//" +c_no_hw+ "//";
+        //设置保存路径D:/download/课程/老师/课程开课/老师作业文件
+        String filePath = "D://download//" +c_no+ "//" +t_id+ "//" +c_no_hw+ "//";
+        String fileURL = c_no+ "/" +t_id+ "/" +c_no_hw+ "/";
         File file_isExists = new File(filePath);
         if( !file_isExists.exists()){//不存在该文件夹时，就创建
             file_isExists.mkdirs();
@@ -372,7 +389,7 @@ public class UserController {
                     stream = new BufferedOutputStream(new FileOutputStream(
                             new File(filePath + file.getOriginalFilename())));//设置文件路径及名字
 
-                    All_file all_file = new All_file(file_no,filePath + file.getOriginalFilename(),file.getOriginalFilename());
+                    All_file all_file = new All_file(file_no,filePath + file.getOriginalFilename(),file.getOriginalFilename(),fileURL+file.getOriginalFilename());
                     sqlMapper.addTeacherAll_file(all_file);
 
                     stream.write(bytes);// 写入
@@ -444,23 +461,34 @@ public class UserController {
         return helpTeacherReturnDownload(file_no, file_name, rsp);
     }
 
-    /**老师将学生作业文件下载     模式2  以json数据库请求，但前端jQuery拒绝文件流下载模式。
+    /**老师将学生作业文件下载   学生将老师布置任务文件下载  模式2
+     *  以json数据库请求，但前端jQuery拒绝文件流下载模式。
      * 建议不要调用，可以为以后的文件服务器进行链接下载模式调用。**/
-    /*@PostMapping(value = "/teacher_download_2",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/teacher_student_download",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<UserSimpleDTO> teacher_download_2 (@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<String> teacher_student_download (@RequestBody String params, HttpServletRequest request,
                                                               HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode paramJson = objectMapper.readTree(params);
         String file_no = paramJson.get("file_no").textValue();
         String file_name = paramJson.get("file_name").textValue();
-        return helpTeacherReturnDownload(file_no, file_name, rsp);
-    }*/
+
+        All_file testAll_file = new All_file(file_no, null, file_name,null);
+        All_file all_file = sqlMapper.findAll_fileByFile_no_name(testAll_file);
+        rsp.setHeader("Access-Control-Allow-Methods", "POST");
+        ResponseInfoDTO responseInfoDTO;
+        if(all_file == null){
+            responseInfoDTO = new ResponseInfoDTO(-7, "获取文件服务器地址失败",null);
+        }else{
+            responseInfoDTO = new ResponseInfoDTO(7, "成功获取文件服务器地址",all_file.getFile_url());
+        }
+        return responseInfoDTO;
+    }
 
     public ResponseInfoDTO<UserSimpleDTO> helpTeacherReturnDownload (String file_no,String file_name,HttpServletResponse rsp){
 
-        All_file testAll_file = new All_file(file_no, null, file_name);
+        All_file testAll_file = new All_file(file_no, null, file_name,null);
         All_file all_file = sqlMapper.findAll_fileByFile_no_name(testAll_file);
 
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
@@ -473,6 +501,33 @@ public class UserController {
         return responseInfoDTO;
     }
 
+    /**老师评价学生作业**/
+    @PostMapping(value = "/teacher_evaluate",produces="application/json;charset=UTF-8")
+    @CrossOrigin(allowCredentials = "false")
+    public ResponseInfoDTO<Course> teacher_evaluate(@RequestBody String params, HttpServletRequest request,
+                                                        HttpServletResponse rsp) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode paramJson = objectMapper.readTree(params);
+        String s_id = paramJson.get("s_id").textValue();
+        String c_no_hw = paramJson.get("c_no_hw").textValue();
+        String get_score = paramJson.get("get_score").textValue();
+        System.out.println(get_score);
+
+        Score testScore = new Score(s_id, c_no_hw);
+        Score newScore = sqlMapper.findScoreByClass(testScore);
+
+        rsp.setHeader("Access-Control-Allow-Methods", "POST");
+        ResponseInfoDTO responseInfoDTO;
+        if(newScore  == null ){
+            responseInfoDTO = new ResponseInfoDTO(-12, "评价失败，作业已经不存在！",null);
+        }else{
+            newScore.setGet_score(get_score);
+            sqlMapper.setScoreGet_score(newScore);
+            responseInfoDTO = new ResponseInfoDTO(12, "评价成功！",newScore);
+        }
+        return responseInfoDTO;
+    }
 
     /**********************************学生操作**********************************/
     /**获取老师作业信息**/
@@ -568,7 +623,7 @@ public class UserController {
     }
 
     public ResponseInfoDTO<UserSimpleDTO> helpReturnDownload (String file_no,String file_name,HttpServletResponse rsp){
-        All_file testAll_file = new All_file(file_no, null, file_name);
+        All_file testAll_file = new All_file(file_no, null, file_name,null);
         All_file all_file = sqlMapper.findAll_fileByFile_no_name(testAll_file);
 
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
@@ -590,29 +645,6 @@ public class UserController {
         String file_name = request.getParameter("file_name");//作业文件存储编号
         return helpReturnDownload(file_no, file_name, rsp);
     }
-
-    /**学生将老师作业文件下载     模式2  以json数据库请求，但前端jQuery拒绝文件流下载模式。
-     * 建议不要调用，可以为以后的文件服务器进行链接下载模式调用。**/
-    /*@PostMapping(value = "/student_download_2",produces="application/json;charset=UTF-8")
-    @CrossOrigin(allowCredentials = "false")
-    public void download2 (@RequestBody String params, HttpServletRequest request, HttpServletResponse rsp) throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode paramJson = objectMapper.readTree(params);
-        String file_no = paramJson.get("file_no").textValue();
-        String file_name = paramJson.get("file_name").textValue();
-
-        All_file testAll_file = new All_file(file_no, null, file_name);
-        All_file all_file = sqlMapper.findAll_fileByFile_no_name(testAll_file);
-
-        if(all_file != null){
-            String filePath = all_file.getAddress();
-            File file = new File(filePath);
-            System.out.println(file_name+"  "+filePath);
-            helpDownload(file, file_name, rsp);//调用文件地址服务器下载函数
-            rsp.setHeader("Access-Control-Allow-Methods", "POST");
-        }
-    }*/
 
     /**学生文件上传前，提示学生已经上传的作业，以便删除以前的上传作业**/
     @PostMapping(value = "/student_help_upload",produces="application/json;charset=UTF-8")
@@ -654,8 +686,9 @@ public class UserController {
         Score score = new Score(s_id, c_no_hw);
         score = sqlMapper.findScoreByClass(score);
 
-        All_file testAll_file = new All_file(score.getFile_no(), null, file_name);
+        All_file testAll_file = new All_file(score.getFile_no(), null, file_name,null);
         All_file all_file = sqlMapper.findAll_fileByFile_no_name(testAll_file);
+        List<String> numAll_file = sqlMapper.findAll_fileByFile_no(score.getFile_no());
 
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
         ResponseInfoDTO responseInfoDTO;
@@ -664,7 +697,9 @@ public class UserController {
         }else {
             Integer nid = all_file.getNid();
             sqlMapper.deleteStudentAll_file(nid);//直接将数据库数据删除
-            sqlMapper.deleteScore(score.getNid());
+            if(numAll_file.size() == 1){
+                sqlMapper.deleteScore(score.getNid());//当all_file只有一个文件时，才执行
+            }
             responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("delete.file.success.code")), PropertiesUtil.getProperty("delete.file.success.msg"),null);
         }
         return responseInfoDTO;
@@ -684,6 +719,7 @@ public class UserController {
 
         Score score = new Score(s_id, c_no_hw, null, file_no);
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");//获取文件
+
         Assign assign = sqlMapper.findAssignByHW(c_no_hw);
 
         rsp.setHeader("Access-Control-Allow-Methods", "POST");
@@ -694,9 +730,9 @@ public class UserController {
         }else {
             MultipartFile file = null;
             BufferedOutputStream stream = null;
-            //设置保存路径D:/aim/课程ID/老师ID/课程开课ID/学生ID/学生作业文件
-            String filePath = "D://aim//" +assign.getC_no()+ "//" +assign.getT_id()+ "//" +c_no_hw+ "//" +s_id+ "//";
-
+            //设置保存路径D:/download/课程ID/老师ID/课程开课ID/学生ID/学生作业文件
+            String filePath = "D://download//" +assign.getC_no()+ "//" +assign.getT_id()+ "//" +c_no_hw+ "//" +s_id+ "//";
+            String fileURL =  assign.getC_no()+ "/" +assign.getT_id()+ "/" +c_no_hw+ "/" +s_id+ "/";
             File file_isExists = new File(filePath);
             if( !file_isExists.exists()){//不存在该文件夹时，就创建
                 file_isExists.mkdirs();
@@ -715,7 +751,7 @@ public class UserController {
                         DateFormat format= new SimpleDateFormat("yyyyMMdd");
                         String create_time = format.format(date);*/
 
-                        All_file all_file = new All_file(file_no,filePath + file.getOriginalFilename(),file.getOriginalFilename());
+                        All_file all_file = new All_file(file_no,filePath + file.getOriginalFilename(),file.getOriginalFilename(), fileURL+ file.getOriginalFilename());
                         sqlMapper.addStudentAll_file(all_file);
 
                         stream.write(bytes);// 写入
@@ -735,7 +771,9 @@ public class UserController {
                 }
             }
         }
-        sqlMapper.addScoreHW(score);
+        if(sqlMapper.findScoreByClass(score) == null){
+            sqlMapper.addScoreHW(score);//当score不存在时，才添加
+        }
         responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("upload.file.success.code")), PropertiesUtil.getProperty("upload.file.success.msg"),assign);
         return responseInfoDTO;
     }

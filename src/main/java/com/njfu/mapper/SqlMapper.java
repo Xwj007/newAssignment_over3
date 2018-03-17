@@ -41,6 +41,7 @@ public interface SqlMapper {
     void deleteAssignHW(Integer nid);
     void deleteTeacherAll_file(String file_no);
     List<String> findTeachingByT_id(String t_id);
+    List<Course> findCourseByT_id(String t_id);
 
     void addAssignHW(Assign test);
     void addTeacherAll_file(All_file test);
@@ -68,4 +69,5 @@ public interface SqlMapper {
     List<All_file> findAll_file_AllByAll(String file_no);
     List<Score_File> findScore_FileByC_no_hw(String c_no_hw);
 
+    void setScoreGet_score(Score score);
 }
