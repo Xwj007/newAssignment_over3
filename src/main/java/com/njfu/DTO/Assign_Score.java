@@ -1,6 +1,7 @@
 package com.njfu.DTO;
 
 import com.njfu.entity.Assign;
+import com.njfu.entity.Score;
 
 import java.util.List;
 
@@ -10,29 +11,26 @@ import java.util.List;
  */
 public class Assign_Score extends Assign{
 
-    private List<Score_File> score_files;
+    private List<Score> scores;
 
     public Assign_Score() {
     }
 
-    public Assign_Score(List<Score_File> score_files) {
-        this.score_files = score_files;
+
+    public Assign_Score(List<Score> scores) {
+        this.scores = scores;
     }
 
-    public Assign_Score(String t_id, String c_no, String c_no_hw, String time, String file_no, String message, String c_time) {
+    public Assign_Score(String t_id, String c_no, String c_no_hw, String time, String file_no, String message, String c_time, List<Score> scores) {
         super(t_id, c_no, c_no_hw, time, file_no, message, c_time);
+        this.scores = scores;
     }
 
-    public Assign_Score(String t_id, String c_no, String c_no_hw, String time, String file_no, String message, String c_time, List<Score_File> score_files) {
-        super(t_id, c_no, c_no_hw, time, file_no, message, c_time);
-        this.score_files = score_files;
+    public List<Score> getScores() {
+        return scores;
     }
 
-    public List<Score_File> getScore_files() {
-        return score_files;
-    }
-
-    public void setScore_files(List<Score_File> score_files) {
-        this.score_files = score_files;
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
     }
 }

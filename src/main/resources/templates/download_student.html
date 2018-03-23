@@ -11,26 +11,7 @@
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../static/css/index.css">
     <title>学生界面</title>
-    <style>
-        #user_name,#user_id{
-            width: 80px;/*宽度*/
-            text-align: center;/*水平居中*/
-            border: none;/*划线*/
-            font-size: 15px;/*字体大小*/
-            color: #0f0f0f;/*颜色*/
-            font-weight: bold;/*加粗*/
-        }
 
-        #logo-text-en{
-            font-size: 7px;
-            color: #ffffff;
-        }
-
-        #logo-title{
-            color: #ffffff;
-            vertical-align: text-top;/*垂直居中*/
-        }
-    </style>
 
 </head>
 
@@ -56,10 +37,7 @@
                     <a href="index_student.html">首页</a>
                 </li>
                 <li  class="active">
-                    <a href="download_student.html">下载作业</a>
-                </li>
-                <li>
-                    <a href="upload_student.html">上传作业</a>
+                    <a href="download_student.html">作业任务</a>
                 </li>
                 <li class="dropdown pull-right">
                     <input id="user_name" value="未登录" readonly="true"/>
@@ -100,6 +78,21 @@
             </div>
         </div>
         <div class="col-md-1 column">
+            <div class="modal fade " id="modal-container-1114" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="background: none">
+                <div class="modal-dialog" role="document" style="width: 350px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                正在上传......
+                            </h4>
+                        </div>
+                        <ccc>
+
+                        </ccc>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -111,29 +104,31 @@
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script src="./constant.js"></script>
+<script src="../static/js/jquery.form.min.js" crossorigin="anonymous"></script><script src="./constant.js"></script>
 
 <script>
 
     /*网页生成时，验证是否登录的跳传*/
     function jumpLogin() {
-        if(!Cookies.get('id')){
+        if(!Cookies.get('s_id')){
             alert("您还未登陆！请登陆");
             window.open('login.html','_self');
+        }else{
+            getUser();
+            getDownload_Info();
         }
-        getUser();
-        getDownload_Info();
     }
 
     <!-- 获取登录信息，并修改登录栏-->
     function getUser(){
-        $('#user_name').val(Cookies.get('account'));
-        $('#user_id').val(Cookies.get('id'));
+        $('#user_id').val(Cookies.get('s_id'));
+        $('#user_name').val(Cookies.get('s_account'));
     }
 
     <!-- 推出登录，删除存储的cookies-->
     function deleteCookies() {
-        Cookies.remove('id', { path: '' });
-        Cookies.remove('account', { path: '' });
+        Cookies.remove('s_id', { path: '' });
+        Cookies.remove('s_account', { path: '' });
         window.open('login.html','_self');
     }
 
@@ -146,17 +141,21 @@
         var $thead=$('<thead></thead>');
         var $trs=$('<tr class="info"></tr>');
         var $th1=$('<th>课程</th>');
+        var $th11=$('<th>教师</th>');
         var $th2=$('<th>上传时间</th>');
         var $th3=$('<th>作业介绍</th>');
         var $th4=$('<th>文件编码</th>');
-        var $th5=$('<th>文件名</th>');
-        var $th6=$('<th>是否下载</th>');
+        var $th5=$('<th>作业状态</th>');
+        var $th55=$('<th style="width: 100px;">上传作业文件</th>');
+        var $th6=$('<th style="width: 100px;">下载老师任务</th>');
         var $tbody=$('<tbody></tbody>');
         $trs.append($th1);
+        $trs.append($th11);
         $trs.append($th2);
         $trs.append($th3);
         $trs.append($th4);
         $trs.append($th5);
+        $trs.append($th55);
         $trs.append($th6);
         $thead.append($trs);
         $table.append($thead);
@@ -166,41 +165,98 @@
         for(var i=0;i<data.length;i++){
             for (var x = 0; x < data[i].assigns.length; x++) {
 
-                for(var j=0;j<data[i].assigns[x].files.length;j++){
-                    if(count%2==0){
-                        var $tr=$('<tr></tr>');
-                    }else{
-                        var $tr=$('<tr class="success"></tr>');
-                    }
-                    $table.append($tr);
-
-                    var $td1=$('<td>'+data[i].c_name+'</td>');
-                    $tr.append($td1);
-                    var $td2=$('<td>'+data[i].assigns[x]['c_time']+'</td>');
-                    $tr.append($td2);
-                    var $td3=$('<td>'+data[i].assigns[x]['message']+'</td>');
-                    $tr.append($td3);
-                    var $td4=$('<td>'+data[i].assigns[x]['file_no']+'</td>');
-                    $tr.append($td4);
-                    var $td5=$('<td>'+data[i].assigns[x].files[j]+'</td>');
-                    $tr.append($td5);
-                    var $td6=$('<td>' +
-                        '<button id="'+ data[i].assigns[x]['file_no']+'" name="'+data[i].assigns[x].files[j] +'" onclick="Start_Download(this)" type="submit" class="btn btn-small btn-warning">' +
-                        '<i class="glyphicon glyphicon-download-alt">下载</i>' +
-                        '</button></td>');
-                    $tr.append($td6);
-
-                    count++;
+                if(count%2==0){
+                    var $tr=$('<tr></tr>');
+                }else{
+                    var $tr=$('<tr class="success"></tr>');
                 }
+                $table.append($tr);
+
+                var $td1=$('<td>'+data[i].c_name+'</td>');
+                $tr.append($td1);
+                var $td11=$('<td>'+data[i].t_account+'</td>');
+                $tr.append($td11);
+                var $td2=$('<td>'+data[i].assigns[x]['c_time']+'</td>');
+                $tr.append($td2);
+                var $td3=$('<td>'+data[i].assigns[x]['message']+'</td>');
+                $tr.append($td3);
+                var $td4=$('<td>'+data[i].assigns[x]['file_no']+'</td>');
+                $tr.append($td4);
+                var $td55=$('<td style="font-size: 18px;color: #0f0f0f;font-weight: bold;">'+data[i].assigns[x]['c_no']+'</td>');
+                $tr.append($td55);
+                var $td5 = $('<td><button id="' + data[i].assigns[x]['c_no_hw'] + '" onclick="make_upload(this)" class="btn btn-small btn-info">' +
+                    '<i class="glyphicon glyphicon-open">上传</i>' +
+                    '</button></td>');
+                $tr.append($td5);
+
+                var $td6=$('<td>' +
+                    '<button  name="'+data[i].assigns[x]['file_no'] +'" onclick="Start_Download(this)" type="submit" class="btn btn-small btn-warning" ' +
+                    ' title="下载提示" data-container="body" data-toggle="popover" data-placement="right" data-content="' +data[i].assigns[x].nid +'个文件正在下载" >' +
+                    '<i class="glyphicon glyphicon-save">下载</i>' +
+                    '</button></td>');
+                $tr.append($td6);
+
+                count++;
             }
         }
+    }
+
+    <!--学生上传作业提示框-->
+    function make_upload(obj) {
+        var level = $(obj).parent().parent("tr").children('td').eq(5).text();//获取表格
+        if(level=="未提交" || level.substring(0,2)=="退回"){
+            $("#form1").remove();
+            var $form=$('<form id="form1" role="form" method="POST" enctype="multipart/form-data" action="http://'+ getLocalIP()+':8080/student_upload"></form>');
+            $("ccc").append($form);
+
+            var $div0 = $('<div class="modal-body"></div>');
+
+            var $div1=$('<div class="input-group"> <input name="file" id="file" type="file" multiple/> </div>');
+            $div0.append($div1);
+
+            var $div2=$('<div></div>');
+            var $S_id=$('<input type="hidden" id="s_id" name="s_id" value="'+ Cookies.get('s_id')+'"/>');
+            var $C_no_hw=$('<input type="hidden" id="c_no_hw" name="c_no_hw" value="'+ obj.id+'"/>');
+            $div2.append($S_id);
+            $div2.append($C_no_hw);
+            $div0.append($div2);
+            $form.append($div0);
+
+            var $div00 = $('<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button onclick="testUpload()" type="submit" class="btn btn-primary">保存</button></div>');
+            $form.append($div00);
+
+            $('#modal-container-1114').modal('show');
+
+
+        }else{
+            if(level=="待评价" || level=="等待重新评价"){
+                alert("正在等待老师评价，无法重复上传！");
+            }else{
+                alert("老师评价完毕，无法重复上传！");
+            }
+
+        }
+
+    }
+
+
+    <!-- 上传文件表单，后端返回的信息处理-->
+    function testUpload(){
+        $('#modal-container-1114').modal('hide');
+
+        $("#form1").ajaxForm(function(data){
+            if(data.code==6){
+                alert(data.msg);
+                location.reload();//重新加载
+            }
+        });
     }
 
 
     <!--获取老师布置的作业-->
     function getDownload_Info() {
-        var Account=Cookies.get('account');
-        var Id=Cookies.get('id');
+        var Account=Cookies.get('s_account');
+        var Id=Cookies.get('s_id');
 
         var objJson = {
             "account":Account,
@@ -227,23 +283,23 @@
     <!-- 获取文件下载链接，准备下载-->
     function Start_Download(obj) {
 
-        var File_no=obj.id;
-        var File_name=obj.name;
-        console.log(obj.id);
-        console.log(obj.name);
+        var File_no = obj.name;
         var objJson = {
-            "file_no":File_no,
-            "file_name":File_name
+            "file_no":File_no
         };
-        console.log(typeof(File_no));
+
         $.post("http://"+ getLocalIP() +":8080/teacher_student_download",
             JSON.stringify(objJson),
             function(data) {
                 if(data.code==7){
-                    alert(data.msg);
-                    download1(data.data,File_name);
+
+                    $("[data-toggle='popover']").popover();
+                    for(var i=0;i<data.data.length;i++){
+                        //循环下载
+                        downloadFile(data.data[i].file_url,data.data[i].name);
+                    }
+
                 }else{
-                    console.log(data);
                     alert(data.msg);
                 }
             },
@@ -251,14 +307,17 @@
         )
     }
 
+
     <!-- 真正下载-->
     // 会打开一个空白页下载，然后空白页消失，用户体验不好
-    function download1(url,file_name) {
+    function downloadFile(url,file_name) {
         var newURL = "http://"+ getLocalIP() +":8081/download/" + url;
         const a = document.createElement('a');
         a.setAttribute('href', newURL);
         a.setAttribute('download', file_name);
         a.click();
+        //设置时间关闭popover
+        setTimeout(function(){$("[data-toggle='popover']").popover('hide');},3500);
     }
 
 </script>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
 
@@ -12,24 +12,23 @@
     <link rel="stylesheet" href="../static/css/index.css">
     <title>老师界面</title>
     <style>
-        #user_name,#user_id{
-            width: 80px;/*宽度*/
-            text-align: center;/*水平居中*/
-            border: none;/*划线*/
-            font-size: 15px;/*字体大小*/
-            color: #0f0f0f;/*颜色*/
+        @font-face {
+            font-family: 'iconfont';  /* project id 586985 */
+            src: url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.eot');
+            src: url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.eot?#iefix') format('embedded-opentype'),
+            url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.woff') format('woff'),
+            url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.ttf') format('truetype'),
+            url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.svg#iconfont') format('svg');
+        }
+        .iconfont {/*对阿里图标进行修饰*/
+            /*color: #c12e2a;*/
+            font-family:"iconfont" !important;
+            font-style:normal;
             font-weight: bold;/*加粗*/
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        #logo-text-en{
-            font-size: 7px;
-            color: #ffffff;
-        }
-
-        #logo-title{
-            color: #ffffff;
-            vertical-align: text-top;/*垂直居中*/
-        }
     </style>
 
 </head>
@@ -91,9 +90,14 @@
     </div>
     <div class="row clearfix">
         <div class="col-md-1 column">
+
         </div>
         <div class="col-md-10 column">
             <div class="jumbotron">
+                <make_form>
+
+                </make_form>
+                <br/><br/><br/><br/>
                 <aaa>
 
                 </aaa>
@@ -118,6 +122,7 @@
                                     <option>良</option>
                                     <option>及格</option>
                                     <option>不及格</option>
+                                    <option>退回</option>
                                 </select>
                             </div>
                             <ccc>
@@ -126,7 +131,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <button onclick="true_evaluate(this)" type="submit" class="btn btn-primary">保存</button>
+                            <button onclick="true_evaluate()" type="submit" class="btn btn-primary">保存</button>
                         </div>
                     </div>
 
@@ -149,106 +154,99 @@
 
     /*网页生成时，验证是否登录的跳传*/
     function jumpLogin() {
-        if(!Cookies.get('id')){
+        if(!Cookies.get('t_id')){
             alert("您还未登陆！请登陆");
             window.open('login.html','_self');
+        }else{
+            getUser();
+            getSelect_Info();
         }
-        getUser();
-        getDownload_Info();
     }
 
     <!-- 获取登录信息，并修改登录栏-->
     function getUser(){
-        $('#user_name').val(Cookies.get('account'));
-        $('#user_id').val(Cookies.get('id'));
+        $('#user_name').val(Cookies.get('t_account'));
+        $('#user_id').val(Cookies.get('t_id'));
     }
 
     <!-- 推出登录，删除存储的cookies-->
     function deleteCookies() {
-        Cookies.remove('id', { path: '' });
-        Cookies.remove('account', { path: '' });
+        Cookies.remove('t_id', { path: '' });
+        Cookies.remove('t_account', { path: '' });
         window.open('login.html','_self');
     }
 
     <!-- 生成学生之前上传作业的表格-->
-    function getTable_Info(data){
+    function getTable_Info(C_no_name,data){
 
-        var $table=$('<table class="table table-bordered table-condensed"></table>');
+        $("#table_info").remove();
+        var $table=$('<table class="table table-bordered table-condensed" id="table_info"></table>');
         $("aaa").append($table);
 
         var $thead=$('<thead></thead>');
         var $trs=$('<tr class="info"></tr>');
-        var $th1=$('<th>课程</th>');
-        var $th2=$('<th>作业介绍</th>');
+        /*var $th1=$('<th>课程</th>');
+        var $th2=$('<th>作业介绍</th>');*/
         var $th3=$('<th>学生学号</th>');
-        var $th4=$('<th>文件编码</th>');
-        var $th5=$('<th>文件名</th>');
-        var $th555=$('<th>评价等级</th>');
-        var $th6=$('<th>是否下载</th>');
+        var $th4=$('<th>学生姓名</th>');
+        var $th2=$('<th>作业等级</th>')
+        var $th5=$('<th style="width: 100px;">评价学生作业</th>');
+        var $th6=$('<th style="width: 100px;">下载学生作业</th>');
         var $tbody=$('<tbody></tbody>');
-        $trs.append($th1);
-        $trs.append($th2);
+        /*$trs.append($th1);
+        $trs.append($th2);*/
         $trs.append($th3);
         $trs.append($th4);
+        $trs.append($th2);
         $trs.append($th5);
-        $trs.append($th555);
         $trs.append($th6);
         $thead.append($trs);
         $table.append($thead);
         $table.append($tbody);
 
         var count = 0;//表格颜色控制
-        for(var i=0;i<data.length;i++) {
-            for (var x = 0; x < data[i].assign_scores.length; x++) {
-                for (var j = 0; j < data[i].assign_scores[x]['score_files'].length; j++) {
-                    for (var k = 0; k < data[i].assign_scores[x]['score_files'][j].all_files.length; k++) {
+        for(var i=0;i<data.scores.length;i++) {
 
-                        if (count % 2 == 0) {
-                            var $tr = $('<tr></tr>');
-                        } else {
-                            var $tr = $('<tr class="success"></tr>');
-                        }
-                        $table.append($tr);
-
-                        var $td1 = $('<td>' + data[i].c_name + '</td>');
-                        $tr.append($td1);
-                        var $td2 = $('<td>' + data[i].assign_scores[x]['message'] + '</td>');
-                        $tr.append($td2);
-                        var $td3 = $('<td>' + data[i].assign_scores[x]['score_files'][j].s_id + '</td>');
-                        $tr.append($td3);
-                        var $td4 = $('<td>' + data[i].assign_scores[x]['score_files'][j].file_no + '</td>');
-                        $tr.append($td4);
-                        var $td5 = $('<td>' + data[i].assign_scores[x]['score_files'][j].all_files[k].name + '</td>');
-                        $tr.append($td5);
-                        var $td555 = $('<td><label>' + testGet_score(data[i].assign_scores[x]['score_files'][j].get_score) + ' &nbsp;</label>' +
-                            '<button id="' + data[i].assign_scores[x]['score_files'][j].s_id + '"  name="' + data[i].assign_scores[x]['score_files'][j].c_no_hw + '" onclick="make_evaluate(this)" class="btn btn-small btn-info pull-right" href="#modal-container-287808" data-toggle="modal">' +
-                            '<i class="glyphicon glyphicon-pencil">评价</i>' +
-                            '</button></td>');
-                        $tr.append($td555);
-                        var $td6 = $('<td>' +
-                            '<button id="' + data[i].assign_scores[x]['score_files'][j].file_no + '" name="' + data[i].assign_scores[x]['score_files'][j].all_files[k].name + '" onclick="Start_Download(this)" type="submit" class="btn btn-small btn-warning">' +
-                            '<i class="glyphicon glyphicon-download-alt">下载</i>' +
-                            '</button></td>');
-                        $tr.append($td6);
-
-                        count++;
-                    }
-                }
+            if (count % 2 == 0) {
+                var $tr = $('<tr></tr>');
+            } else {
+                var $tr = $('<tr class="success"></tr>');
             }
+            $table.append($tr);
+
+            /*var $td1 = $('<td>' + C_no_name + '</td>');
+            $tr.append($td1);
+            */
+            var $td3 = $('<td>' + data.scores[i].s_id + '</td>');
+            $tr.append($td3);
+            var $td4 = $('<td>' + data.scores[i].c_no_hw + '</td>');
+            $tr.append($td4);
+            var $td2 = $('<td style="font-size: 18px;color: #0f0f0f;font-weight: bold;">' + testGet_score(data.scores[i].get_score) + '</td>');
+            $tr.append($td2);
+
+            var $td5 = $('<td><button id="' + data.scores[i].s_id+ '"  name="' + data.c_no_hw+ '" onclick="make_evaluate(this)" class="btn btn-small btn-info" >' +
+                '<i class="glyphicon glyphicon-pencil">评价</i></button></td>');
+            $tr.append($td5);
+            var $td6 = $('<td>' +
+                '<button name="' + data.scores[i].file_no  + '" onclick="Start_Download(this)" type="submit" class="btn btn-small btn-warning"' +
+                ' title="下载提示" data-container="body" data-toggle="popover" data-placement="right" data-content="' +data.scores[i].nid +'个文件正在下载" >' +
+                '<i class="glyphicon glyphicon-download-alt">下载</i>' +
+                '</button></td>');
+            $tr.append($td6);
+
+            count++;
         }
     }
 
-
-
     function testGet_score(getScore) {
         if(getScore == null || getScore==""){
-            return "未评价";
+            return "等待评价";
         }
         return getScore;
     }
 
     <!--老师评价学生作业-->
-    function true_evaluate(obj){
+    function true_evaluate(){
         var S_id = $('#s_id').val();
         var C_no_hw = $('#c_no_hw').val();
         var Get_score = $('#select_level').val();
@@ -265,7 +263,8 @@
                 function(data) {
                     if(data.code==12){
                         console.log(data);
-                        location.reload();//重新加载
+                        Student_HW_Info();
+                        //location.reload();//重新加载
                     }else {
                         alert(data.msg);
                     }
@@ -279,66 +278,100 @@
 
     <!--保存对象到评分提示框-->
     function make_evaluate(obj) {
+        var level = $(obj).parent().parent("tr").children('td').eq(2).text();//获取表格
+        if(level=="等待评价"|| level=="等待重新评价"){
+            $('#modal-container-287808').modal('show');
 
-        var $div=$('<div></div>');
-        $("ccc").append($div);
+            var $div=$('<div></div>');
+            $("ccc").append($div);
 
-        var $S_id=$('<input type="hidden" id="s_id" name="s_id" value="'+ obj.id+'"/>');
-        var $C_no_hw=$('<input type="hidden" id="c_no_hw" name="c_no_hw" value="'+ obj.name+'"/>');
-        $div.append($S_id);
-        $div.append($C_no_hw);
+            var $S_id=$('<input type="hidden" id="s_id" name="s_id" value="'+ obj.id+'"/>');
+            var $C_no_hw=$('<input type="hidden" id="c_no_hw" name="c_no_hw" value="'+ obj.name+'"/>');
+            $div.append($S_id);
+            $div.append($C_no_hw);
+        }else{
+            if(level=="未提交"){
+                alert("学生未提交作业，无法点评！");
+            }else{
+                alert("无法再次评价");
+            }
+
+        }
+
     }
 
     <!--老师获取学生作业信息记录-->
-    function getDownload_Info() {
-        var T_id=Cookies.get('id');
-        console.log(T_id);
+    function Student_HW_Info(){
+        var T_id = Cookies.get('t_id');
+        var C_no_hw = $('#select_c_no_hw').val();
+        var C_no_name = $('#select_c_no_hw').find("option:selected").attr("data-username");//被选中的课程名称
+
+        $("#select_lable1").html(C_no_name);//改变lable内容
+        $("#select_lable2").html($('#select_c_no_hw').find("option:selected").text());//改变lable内容
+
         var objJson = {
-            "t_id":T_id
+            "t_id":T_id,
+            "c_no_hw":C_no_hw
         };
-        if(T_id!=null && T_id!=""){
-            $.post("http://"+ getLocalIP() +":8080/getS_Homework",
-                JSON.stringify(objJson),
-                function(data) {
-                    if(data.length==0){
-                        alert("无学生上传作业！")
-                    }else {
-                        console.log(data);
-                        getTable_Info(data);
-                    }
-                },
-                "JSON"
-            )
+
+        if(C_no_hw == "---请选择任务---" ){
+            alert("选择错误");
         }else{
-            alert("未登录！");
+            if(T_id!=null && T_id!="" ){
+                $('#modal-container-287808').modal('hide');
+
+                $.post("http://"+ getLocalIP() +":8080/getClass_Homework",
+                    JSON.stringify(objJson),
+                    function(data) {
+                        if(data.code==14){
+
+                            console.log(data);
+                            getTable_Info(C_no_name,data.data);
+                        }else {
+                            alert(data.msg);
+                        }
+                    },
+                    "JSON"
+                )
+            }else{
+                alert("未登录！");
+            }
+
         }
+
     }
+
 
     <!-- 获取文件下载链接，准备下载-->
     function Start_Download(obj) {
 
-        var File_no=obj.id;
-        var File_name=obj.name;
-        console.log(obj.id);
-        console.log(obj.name);
-        var objJson = {
-            "file_no":File_no,
-            "file_name":File_name
-        };
-        console.log(typeof(File_no));
-        $.post("http://"+ getLocalIP() +":8080/teacher_student_download",
-            JSON.stringify(objJson),
-            function(data) {
-                if(data.code==7){
-                    alert(data.msg);
-                    downloadFile(data.data,File_name);
-                }else{
-                    console.log(data);
-                    alert(data.msg);
-                }
-            },
-            "JSON"
-        )
+        var level = $(obj).parent().parent("tr").children('td').eq(2).text();//获取表格
+        if(level=="未提交"){
+            alert("学生未提交作业，无法下载！");
+        }else{
+            var File_no = obj.name;
+            var objJson = {
+                "file_no":File_no
+            };
+
+            $.post("http://"+ getLocalIP() +":8080/teacher_student_download",
+                JSON.stringify(objJson),
+                function(data) {
+                    if(data.code==7){
+
+                        $("[data-toggle='popover']").popover();
+                        for(var i=0;i<data.data.length;i++){
+                            //循环下载
+                            downloadFile(data.data[i].file_url,data.data[i].name);
+                        }
+                    }else{
+                        alert(data.msg);
+                    }
+                },
+                "JSON"
+            )
+        }
+
     }
 
     <!-- 真正下载-->
@@ -350,6 +383,61 @@
         a.setAttribute('href', newURL);
         a.setAttribute('download', file_name);
         a.click();
+        //设置时间关闭popover
+        setTimeout(function(){$("[data-toggle='popover']").popover('hide');},3000);
+    }
+
+
+
+    <!--获取老师布置的作业，以便上传作业选择-->
+    function getSelect_Info() {
+        var Account=Cookies.get('t_account');
+        var Id=Cookies.get('t_id');
+
+        var objJson = {
+            "account":Account,
+            "id":Id
+        };
+        if(Account!=null && Account!=""){
+            $.post("http://"+ getLocalIP() +":8080/teacher_help_upload",
+                JSON.stringify(objJson),
+                function(data) {
+                    if(data.code==10){
+                        console.log(data);
+                        getSelect(data);
+                    }else {
+                        alert(data.msg);
+                    }
+                },
+                "JSON"
+            )
+        }else{
+            alert("未登录！");
+        }
+    }
+
+
+    <!--生成老师任务的下拉列表，以便生成学生作业信息-->
+    function getSelect(data) {
+
+        var $form = $('<div class="navbar-form navbar-left" role="search"></div>');
+        $("make_form").append($form);
+
+        var $select=$('<select class="form-control" id="select_c_no_hw" style="width: 200px"></select>');
+        $form.append($select);
+        var $op0=$('<option>---请选择任务---</option>');
+        $select.append($op0);
+        for(var i=0;i<data.data.length;i++){
+            var $op1=$('<option value="'+data.data[i]['c_no_hw']+'" data-username="'+data.data[i]['c_no']+'">'+data.data[i]['message']+'</option>');
+            $select.append($op1);
+        }
+
+        var $button = $('<d>&nbsp;&nbsp;</d><button class="btn btn-group" id="btn-upload" onclick="Student_HW_Info()"><i class="iconfont">&#xe60a;</i>检索</button>');
+        $form.append($button);
+        var $lable1 = $('<d>&nbsp;</d><lable class="label label-success pull-right" id="select_lable1" style="font-size: 23px;color: #0f0f0f;font-weight: bold;"></lable>');
+        $form.append($lable1);
+        var $lable2 = $('<d>&nbsp;</d><lable class="label label-info pull-right" id="select_lable2" style="font-size: 23px;color: #0f0f0f;font-weight: bold;"></lable>');
+        $form.append($lable2);
     }
 
 </script>

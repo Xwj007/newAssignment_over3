@@ -16,9 +16,13 @@ public class Assign {
     private String file_no;     //文件存储编号
     private String message;     //作业信息介绍
     private String c_time;      //创建时间
-    private List<String> files;       //文件
 
     public Assign() {
+    }
+
+    public Assign(String t_id, String c_no_hw) {
+        this.t_id = t_id;
+        this.c_no_hw = c_no_hw;
     }
 
     public Assign(String t_id, String c_no, String c_no_hw, String time, String file_no, String message, String c_time) {
@@ -95,13 +99,6 @@ public class Assign {
         this.c_time = c_time;
     }
 
-    public List<String> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<String> files) {
-        this.files = files;
-    }
 
     @Override
     public String toString() {

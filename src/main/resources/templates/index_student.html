@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
 
-
     <link rel="stylesheet" href="../static/materialize/css/materialize.min.css" media="screen,projection">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -12,26 +11,6 @@
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../static/css/index.css">
     <title>学生界面</title>
-    <style>
-        #user_name,#user_id{
-            width: 80px;/*宽度*/
-            text-align: center;/*水平居中*/
-            border: none;/*划线*/
-            font-size: 15px;/*字体大小*/
-            color: #0f0f0f;/*颜色*/
-            font-weight: bold;/*加粗*/
-        }
-
-        #logo-text-en{
-            font-size: 7px;
-            color: #ffffff;
-        }
-
-        #logo-title{
-            color: #ffffff;
-            vertical-align: text-top;/*垂直居中*/
-        }
-    </style>
 
 </head>
 
@@ -57,10 +36,7 @@
                     <a href="#">首页</a>
                 </li>
                 <li>
-                    <a href="download_student.html">下载作业</a>
-                </li>
-                <li>
-                    <a href="upload_student.html">上传作业</a>
+                    <a href="download_student.html">作业任务</a>
                 </li>
                 <li class="dropdown pull-right">
                     <input id="user_name" value="未登录" readonly="true"/>
@@ -114,8 +90,6 @@
 </div>
 
 
-
-
 <!--JavaScript below-->
 <script src="../static/js/jquery-3.2.1.min.js"></script>
 <script src="../static/materialize/js/materialize.min.js"></script>
@@ -125,27 +99,23 @@
 <script>
     <!--跳转-->
     function jumpLogin() {
-        if(!Cookies.get('id')){
+        if(!Cookies.get('s_id')){
             alert("您还未登陆！请登陆");
             window.open('login.html','_self');
+        }else{
+            getUser();
         }
-        getUser();
     }
 
     function getUser(){
-
-        $('#user_name').val(Cookies.get('account'));
-        $('#user_id').val(Cookies.get('id'));
-
+        $('#user_id').val(Cookies.get('s_id'));
+        $('#user_name').val(Cookies.get('s_account'));
     }
 
     function deleteCookies() {
-        //alert(Cookies.get('id'));
-        Cookies.remove('id', { path: '' });
-        Cookies.remove('account', { path: '' });
-        //alert(Cookies.get('id'));
+        Cookies.remove('s_id', { path: '' });
+        Cookies.remove('s_account', { path: '' });
         window.open('login.html','_self');
-
     }
 
 </script>

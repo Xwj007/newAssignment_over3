@@ -2,6 +2,24 @@
 #top-text{display:inline;font-size:40px;color:rgb(50,150,230);padding:5ex 0;}
 #top-nav{background:linear-gradient(90deg,rgb(35,10,15),rgb(60,0,40));}
 #root-menu-bar{border:none;background-color:#fff;width:100%;height:6ex;margin-bottom: 0px;}
+#user_name,#user_id{
+    width: 80px;/*宽度*/
+    text-align: center;/*水平居中*/
+    border: none;/*划线*/
+    font-size: 15px;/*字体大小*/
+    color: #0f0f0f;/*颜色*/
+    font-weight: bold;/*加粗*/
+}
+
+#logo-text-en{
+    font-size: 7px;
+    color: #ffffff;
+}
+
+#logo-title{
+    color: #ffffff;
+    vertical-align: text-top;/*垂直居中*/
+}
 .top-right-control{color:white;}
 .nav-custom-menu{list-style-type:none;margin:0px;padding:0;overflow:hidden;background-color:white;}
 .nav-custom-menu a{display:block;color:#777777;text-align:center;padding:10px;text-decoration:none;float:right;font-size:18px;}

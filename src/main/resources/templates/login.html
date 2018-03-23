@@ -32,7 +32,7 @@
     .login-title{padding:10px;text-align:center;}
     .login-title h3{margin:0;}
     .login-box-body{background-color:white;padding:20px;}
-    #id,#account,#password{text-indent:10px;}
+    #id,#password{text-indent:10px;}
     .input-group{padding:16px;margin-left:auto;margin-right:auto;}
     .input-group button{width:100px;}
     .checkbox{padding-left:20px;}
@@ -51,10 +51,6 @@
                 <div class="input-group">
                     <span class="input-group-addon"><i class="iconfont">&#xe611;</i></span>
                     <input id="id" type="text" class="form-control" v-model="id" placeholder="ID">
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <input id="account" type="text" class="form-control" v-model="account" placeholder="账号">
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -92,10 +88,6 @@
     $(document).ready(function(){
         $("#id").keydown(function(event){
             if(event.which === 13)
-                $("#account")[0].focus();
-        });
-        $("#account").keydown(function(event){
-            if(event.which === 13)
                 $("#password")[0].focus();
         });
         $("#password").keydown(function(event){
@@ -106,31 +98,32 @@
     });
 
         function userLogin() {
-            var Id, Account, Password, Radio;
+            var Id, Password, Radio;
             Id = $('#id').val();
-            Account = $('#account').val();
             Password = $('#password').val();
             Radio = $('input[name="radio"]:checked').val();
 	
 			var objJson = {
                 "id":Id,
-				"account":Account,
 				"password":Password,
                 "radio":Radio
 			};
-			//alert(getLocalIP());
-			if(Id!=null && Id!="" && Account!=null && Account!="" && Password!=null && Password!="" ){
+			if(Id!=null && Id!=""  && Password!=null && Password!="" ){
 			    $.post("http://"+ getLocalIP() +":8080/login",
 					JSON.stringify(objJson),
 					function(data) {
 					   if(data.code == 0){
-                            Cookies.set('id', Id,{ expires: 7, path: '' });
-                            Cookies.set('account', Account, { expires: 7, path: '' });
-						    alert(Cookies.get('account'));
+
 						    if(Radio == "student"){
-                                window.open("index_student.html", "_self", Account);
+                                Cookies.set('s_id', Id,{ expires: 7, path: '' });
+                                Cookies.set('s_account', data.data.account, { expires: 7, path: '' });
+                                alert(Cookies.get('s_account'));
+                                window.open("index_student.html", "_self");
                             }else{
-                                window.open("index_teacher.html", "_self", Account);
+                                Cookies.set('t_id', Id,{ expires: 7, path: '' });
+                                Cookies.set('t_account', data.data.account, { expires: 7, path: '' });
+                                alert(Cookies.get('t_account'));
+                                window.open("index_teacher.html", "_self");
                             }
 					   }
 					   else

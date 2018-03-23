@@ -27,20 +27,24 @@
     <select id="findStudentByOther"  parameterType="com.njfu.entity.Student" resultMap="StudentResult">
         SELECT * FROM student
         <where>
-            <if test ="account !=null">
-                account= #{account}
-            </if>
             <if test ="s_id !=null">
-                and s_id= #{s_id}
+               s_id= #{s_id}
+            </if>
+            <if test ="account !=null">
+               AND account= #{account}
             </if>
         </where>
     </select>
+
 
     <delete id="deleteStudent" parameterType="INTEGER" >
         DELETE FROM student WHERE nid = #{nid}
     </delete>
 
-
+    <update id="update_Student_pwd" parameterType="com.njfu.entity.Student" >
+        UPDATE student SET password = #{password}
+        WHERE s_id = #{s_id}
+    </update>
 
 
 
@@ -67,12 +71,13 @@
     <select id="findTeacherByOther"  parameterType="com.njfu.entity.Teacher" resultMap="TeacherResult">
         SELECT * FROM teacher
         <where>
-            <if test ="account !=null">
-                account= #{account}
-            </if>
             <if test ="t_id !=null">
-                and t_id= #{t_id}
+                 t_id= #{t_id}
             </if>
+            <if test ="account !=null">
+                AND account= #{account}
+            </if>
+
         </where>
     </select>
 
@@ -83,6 +88,11 @@
     <select id="findTeacherNameByT_id" parameterType="String"  resultType="String">
         SELECT account FROM teacher WHERE t_id= #{t_id}
     </select>
+
+    <update id="update_Teacher_pwd" parameterType="com.njfu.entity.Teacher" >
+        UPDATE teacher SET password = #{password}
+        WHERE t_id = #{t_id}
+    </update>
 
 
     <!--Course类集合 -->
@@ -121,10 +131,6 @@
         SELECT * FROM teaching
     </select>
 
-    <select id="findTeachingByT_id" parameterType="String"  resultType="String">
-        SELECT course.name FROM teaching, course WHERE teaching.t_id = #{t_id} AND course.c_no=teaching.c_no
-    </select>
-
     <select id="findTeachingALLByT_id" parameterType="String"  resultMap="TeachingResult">
         SELECT * FROM teaching WHERE t_id = #{t_id}
     </select>
@@ -133,6 +139,11 @@
         SELECT teaching.* FROM teaching, student WHERE student.s_id = #{s_id} AND student.class = teaching.class
     </select>
 
+    <select id="findStudentTeachingByAssign" parameterType="com.njfu.DTO.Assign_Score"   resultMap="StudentResult">
+        SELECT student.*
+        FROM teaching, student
+        WHERE teaching.t_id = #{t_id} AND teaching.c_no = #{c_no} AND student.class = teaching.class
+    </select>
 
 
 
@@ -224,9 +235,6 @@
         INSERT INTO score (nid, s_id, c_no_hw, file_no) VALUES (#{nid}, #{s_id}, #{c_no_hw}, #{file_no})
     </insert>
 
-    <delete id="deleteScore" parameterType="INTEGER" >
-        DELETE FROM score WHERE nid = #{nid}
-    </delete>
 
     <!--All_file类集合 -->
     <resultMap type="com.njfu.entity.All_file" id="All_fileResult">
@@ -245,8 +253,8 @@
         DELETE FROM all_file WHERE file_no = #{file_no}
     </delete>
 
-    <delete id="deleteStudentAll_file" parameterType="INTEGER" >
-        DELETE FROM all_file WHERE nid = #{nid}
+    <delete id="deleteStudentAll_file" parameterType="String" >
+        DELETE FROM all_file WHERE file_no = #{file_no}
     </delete>
 
     <insert id="addTeacherAll_file"  parameterType="com.njfu.entity.All_file" >
@@ -267,13 +275,14 @@
         SELECT file_name FROM all_file WHERE file_no= #{file_no}
     </select>
 
+    <select id="findAll_fileByFile_no2"  parameterType="String"  resultMap="All_fileResult">
+        SELECT * FROM all_file WHERE file_no= #{file_no}
+    </select>
+
     <select id="findAll_fileByFile_no_name"  parameterType="com.njfu.entity.All_file" resultMap="All_fileResult">
         SELECT * FROM all_file WHERE file_no= #{file_no} AND file_name = #{name}
     </select>
 
-    <select id="findAll_file_AllByAll"  parameterType="String" resultMap="All_fileResult">
-        SELECT * FROM all_file WHERE file_no= #{file_no}
-    </select>
 
 
 
@@ -295,15 +304,9 @@
         SELECT * FROM teacher WHERE account = #{account}
     </select>
 
-    <update id="update_Student_pwd" parameterType="com.njfu.DTO.UserSimpleDTO" >
-        UPDATE student SET password = #{password}
-        WHERE account = #{account}
-    </update>
 
-    <update id="update_Teacher_pwd" parameterType="com.njfu.DTO.UserSimpleDTO" >
-        UPDATE teacher SET password = #{password}
-        WHERE account = #{account}
-    </update>
+
+
 
     <!--Assign_ScoreResult类集合 -->
     <resultMap type="com.njfu.DTO.Assign_Score" id="Assign_ScoreResult">
@@ -321,21 +324,8 @@
         SELECT * FROM assign WHERE t_id = #{t_id} AND c_no = #{c_no}
     </select>
 
-
-    <!--Score_File类集合 -->
-    <resultMap type="com.njfu.DTO.Score_File" id="Score_FileResult">
-        <id column="nid" jdbcType="INTEGER" property="nid"/>
-        <result column="s_id" jdbcType="VARCHAR" property="s_id"/>
-        <result column="c_no_hw" jdbcType="VARCHAR" property="c_no_hw"/>
-        <result column="get_score" jdbcType="VARCHAR" property="get_score"/>
-        <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
-    </resultMap>
-
-    <select id="findScore_FileByC_no_hw"  parameterType="String" resultMap="Score_FileResult">
-        SELECT * FROM score WHERE c_no_hw= #{c_no_hw}
+    <select id="findAssignByT_idAndC_no_hw"  parameterType="com.njfu.entity.Teaching" resultMap="Assign_ScoreResult">
+        SELECT * FROM assign WHERE t_id = #{t_id} AND c_no_hw = #{c_no_hw}
     </select>
-
-
-
 
 </mapper>

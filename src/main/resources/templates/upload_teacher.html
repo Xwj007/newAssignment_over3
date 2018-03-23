@@ -12,24 +12,7 @@
     <link rel="stylesheet" href="../static/css/index.css">
     <title>老师界面</title>
     <style>
-        #user_name,#user_id{
-            width: 80px;/*宽度*/
-            text-align: center;/*水平居中*/
-            border: none;/*划线*/
-            font-size: 15px;/*字体大小*/
-            color: #0f0f0f;/*颜色*/
-            font-weight: bold;/*加粗*/
-        }
 
-        #logo-text-en{
-            font-size: 7px;
-            color: #ffffff;
-        }
-
-        #logo-title{
-            color: #ffffff;
-            vertical-align: text-top;/*垂直居中*/
-        }
 
         #btn-upload{
             font-size: 14px;
@@ -126,26 +109,27 @@
 
     /*网页生成时，验证是否登录的跳传*/
     function jumpLogin() {
-        if(!Cookies.get('id')){
+        if(!Cookies.get('t_id')){
             alert("您还未登陆！请登陆");
             window.open('login.html','_self');
+        }else{
+            getUser();
+            getUpload_Info();
+            makeForm();
+            getSelect_Info();
         }
-        getUser();
-        getUpload_Info();
-        makeForm();
-        getSelect_Info();
     }
 
     <!-- 获取登录信息，并修改登录栏-->
     function getUser(){
-        $('#user_name').val(Cookies.get('account'));
-        $('#user_id').val(Cookies.get('id'));
+        $('#user_name').val(Cookies.get('t_account'));
+        $('#user_id').val(Cookies.get('t_id'));
     }
 
     <!-- 推出登录，删除存储的cookies-->
     function deleteCookies() {
-        Cookies.remove('id', { path: '' });
-        Cookies.remove('account', { path: '' });
+        Cookies.remove('t_id', { path: '' });
+        Cookies.remove('t_account', { path: '' });
         window.open('login.html','_self');
     }
 
@@ -162,6 +146,7 @@
         var $th3=$('<th>作业编码</th>');
         var $th4=$('<th>作业次数</th>');
         var $th5=$('<th>作业内容介绍</th>');
+        var $th55=$('<th>创建时间</th>');
         var $th6=$('<th>是否删除</th>');
         var $tbody=$('<tbody></tbody>');
         /*$trs.append($th1);*/
@@ -169,6 +154,7 @@
         $trs.append($th3);
         $trs.append($th4);
         $trs.append($th5);
+        $trs.append($th55);
         $trs.append($th6);
         $thead.append($trs);
         $table.append($thead);
@@ -194,6 +180,8 @@
             $tr.append($td4);
             var $td5=$('<td>'+data.data[i]['message']+'</td>');
             $tr.append($td5);
+            var $td55=$('<td>'+data.data[i]['c_time']+'</td>');
+            $tr.append($td55);
             var $td6=$('<td><button id="'+ data.data[i]['c_no_hw'] +'"  onclick="teacher_delete(this);location.reload();" type="submit" class="btn btn-small btn-warning">' +
                 '<i class="glyphicon glyphicon-remove">删除</i></button></td>');
             $tr.append($td6);
@@ -214,7 +202,7 @@
         var $panel1=$('<div class="input-group"></div>');
         var $span=$('<span class="input-group-addon"><i class="glyphicon glyphicon-hand-right"></i></span>');
         var $span2=$('<bbb></bbb>');
-        var $span3=$('<input type="hidden" id="t_id" name="t_id" value="'+ Cookies.get('id')+'"/>');
+        var $span3=$('<input type="hidden" id="t_id" name="t_id" value="'+ Cookies.get('t_id')+'"/>');
         $panel1.append($span);
         $panel1.append($span2);
         $panel1.append($span3);
@@ -250,8 +238,8 @@
 
     <!--老师获取自己上传的作业任务-->
     function getUpload_Info() {
-        var Account = Cookies.get('account');
-        var Id=Cookies.get('id' );
+        var Account = Cookies.get('t_account');
+        var Id=Cookies.get('t_id' );
         console.log(Account);
         var objJson = {
             "account":Account,
@@ -277,8 +265,7 @@
 
     <!--老师删除自己上传任务记录-->
     function teacher_delete(obj) {
-        var C_no_hw;
-        C_no_hw = obj.id;
+        var C_no_hw = obj.id;
         var objJson = {
             "c_no_hw":C_no_hw
         };
@@ -300,7 +287,7 @@
     <!--生成老师课程的下拉列表，以便上传任务选择-->
     function getSelect_Info() {
 
-        var Id=Cookies.get('id' );
+        var Id=Cookies.get('t_id' );
         var objJson = {
             "t_id":Id
         };

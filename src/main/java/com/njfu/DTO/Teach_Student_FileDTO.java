@@ -1,7 +1,5 @@
 package com.njfu.DTO;
 
-import com.njfu.entity.Teaching;
-
 import java.util.List;
 
 /**

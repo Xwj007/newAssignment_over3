@@ -30,7 +30,7 @@
     .login-title{padding:10px;text-align:center;}
     .login-title h3{margin:0;}
     .login-box-body{background-color:white;padding:20px;}
-    #account,#old_password,#new_password,#en_password{text-indent:10px;}
+    #old_password,#new_password,#en_password{text-indent:10px;}
     .input-group{padding:16px;margin-left:auto;margin-right:auto;}
     .input-group button{width:100px;}
     .checkbox{padding-left:20px;}
@@ -47,10 +47,6 @@
             <div class="login-box-body"  onsubmit="return checkForm()">
                 <div class="login-title"><h3>人员密码修改</h3></div>
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <input id="account" type="text" class="form-control" v-model="account" placeholder="账号">
-                </div>
-                <div class="input-group">
                     <span class="input-group-addon"><i class="iconfont">&#xe616;</i></span>
                     <input id="old_password" type="text" class="form-control" v-model="old_password" placeholder="原密码">
                 </div>
@@ -64,10 +60,10 @@
                 </div>
                 <div class="input-group">
                     <label class="radio-inline">
-                        <input type="radio" name="radio" id="radio1" value="学生" checked> 学生
+                        <input type="radio" name="radio" id="radio1" value="student" checked> 学生
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="radio" id="radio2"  value="老师"> 老师
+                        <input type="radio" name="radio" id="radio2"  value="teacher"> 老师
                     </label>
                 </div>
                 <div class="input-group"><button id="login-button" onclick="userLogin()" type="submit" class="btn btn-primary">登陆</button></div>
@@ -89,21 +85,20 @@
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/js/vue.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="./constant.js"></script>
+
 <script>
+
     <!--跳转-->
     function jumpLogin() {
-        if(!Cookies.get('id')){
+        if(!Cookies.get('s_id') || !Cookies.get('t_id')){
             alert("您还未登陆！请登陆")
             window.open('login.html','_self');
-        }else {
-            t_hw();
         }
     }
+
     $(document).ready(function(){
-        $("#account").keydown(function(event){
-            if(event.which === 13)
-                $("#old_password")[0].focus();
-        });
+
 		$("#old_password").keydown(function(event){
             if(event.which === 13)
                 $("#new_password")[0].focus();
@@ -115,61 +110,60 @@
         $("#en_password").keydown(function(event){
             if(event.which === 13)
                 $("#login-button").click(userLogin());
-
         });
-
     });
 
 
+    function userLogin() {
+        var Id, Old_password, New_password, En_password, Radio;
 
-        function userLogin() {
-            var Account, Old_password, New_password, En_password, Radio;
-            Account = $('#account').val();
-            Old_password = $('#old_password').val();
-			New_password = $('#new_password').val();
-			En_password = $('#en_password').val();
-            Radio = $('input[name="radio"]:checked').val();
+        Old_password = $('#old_password').val();
+        New_password = $('#new_password').val();
+        En_password = $('#en_password').val();
+        Radio = $('input[name="radio"]:checked').val();
 
-			var objJson = {
-				"account":Account,
-				"old_password":Old_password,
-				"new_password":New_password,
-                "radio":Radio
-			};
-			
-			
-			//$.ajaxSetup({contentType: "application/json"});
-			if(Account!=null && Account!="" && Old_password!=null && Old_password!="" && New_password!=null && New_password!="" && En_password!=null && En_password!=""){
-				if(New_password == En_password){
-					$.post("http://127.0.0.1:8080/update_pwd",
-						JSON.stringify(objJson),
-						function(data) {
-						   if(data.code == 4){
-                               Cookies.set('account', Account, { expires: 7, path: '' });
-							   alert(data.msg);
-							   window.open("index.html", "_self", Account);
-						   }
-						   else
-							   alert(data.msg);
-							//$("#login-alert").alert();
-
-						},
-						"JSON"
-					)
-				
-				}else{
-					alert("新密码确认错误！");
-				}
-				
-			
-			}else{
-				alert("关键输入为空！");
-			}
-			
-
+        if(Radio == "student"){
+            Id = Cookies.get('s_id');
+        }else{
+            Id = Cookies.get('t_id');
         }
 
+        var objJson = {
+            "id":Id,
+            "old_password":Old_password,
+            "new_password":New_password,
+            "radio":Radio
+        };
+        if(Id!=null && Id!="" ){
+            if( Old_password!=null && Old_password!="" && New_password!=null && New_password!="" && En_password!=null && En_password!=""){
+                if(New_password == En_password){
+                    $.post("http://"+ getLocalIP() +":8080/update_pwd",
+                        JSON.stringify(objJson),
+                        function(data) {
+                            if(data.code == 4){
+                                alert(data.msg);
+                                if(Radio == "student"){
+                                    window.open("index_student.html", "_self");
+                                }else{
+                                    window.open("index_teacher.html", "_self");
+                                }
+                            }
+                            else
+                                alert(data.msg);
+                        },
+                        "JSON"
+                    )
+                }else{
+                    alert("新密码确认错误！");
+                }
+            }else{
+                alert("关键输入为空！");
+            }
+        }else{
+            alert("身份选择错误！");
+        }
 
+    }
 
 </script>
 

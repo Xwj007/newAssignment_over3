@@ -1,7 +1,6 @@
 package com.njfu.mapper;
 
 import com.njfu.DTO.Assign_Score;
-import com.njfu.DTO.Score_File;
 import com.njfu.DTO.UserSimpleDTO;
 import com.njfu.entity.*;
 
@@ -27,8 +26,8 @@ public interface SqlMapper {
     void addStudent(Student test);
     void addTeacher(Teacher test);
 
-    void update_Student_pwd(UserSimpleDTO test);
-    void update_Teacher_pwd(UserSimpleDTO test);
+    void update_Student_pwd(Student test);
+    void update_Teacher_pwd(Teacher test);
 
     Student findStudentByOther(Student test);
     Teacher findTeacherByOther(Teacher test);
@@ -40,7 +39,6 @@ public interface SqlMapper {
     Assign findAssignByHW(String c_no_hw);
     void deleteAssignHW(Integer nid);
     void deleteTeacherAll_file(String file_no);
-    List<String> findTeachingByT_id(String t_id);
     List<Course> findCourseByT_id(String t_id);
 
     void addAssignHW(Assign test);
@@ -53,21 +51,22 @@ public interface SqlMapper {
     String findTeacherNameByT_id(String t_id);
 
     List<String> findAll_fileByFile_no(String file_no);
+    List<All_file> findAll_fileByFile_no2(String file_no);
     All_file findAll_fileByFile_no_name(All_file test);
 
     List<Score> findScoreByS_id(String s_id);
+    List<Score> findScoreByC_no_hw(String c_no_hw);
     String findCourseNameByOther(String c_no_hw);
-    void deleteScore(Integer nid);
 
     Score findScoreByClass(Score test);
-    void deleteStudentAll_file(Integer nid);
+    void deleteStudentAll_file(String file_no);
 
     void addStudentAll_file(All_file test);
     void addScoreHW(Score test);
 
     List<Teaching> findTeachingALLByT_id(String t_id);
-    List<All_file> findAll_file_AllByAll(String file_no);
-    List<Score_File> findScore_FileByC_no_hw(String c_no_hw);
-
     void setScoreGet_score(Score score);
+
+    Assign_Score findAssignByT_idAndC_no_hw(Assign test);
+    List<Student> findStudentTeachingByAssign(Assign_Score test);
 }

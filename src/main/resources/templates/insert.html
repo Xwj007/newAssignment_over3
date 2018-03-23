@@ -90,10 +90,12 @@
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/js/vue.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="./constant.js"></script>
+
 <script>
     <!--跳转-->
     function jumpLogin() {
-        if(!Cookies.get('id')){
+        if(!Cookies.get('s_id') || !Cookies.get('t_id')){
             alert("您还未登陆！请登陆")
             window.open('login.html','_self');
         }
@@ -135,10 +137,9 @@
 				"nclass":Nclass,
                 "radio":Radio
 			};
-			
-			//$.ajaxSetup({contentType: "application/json"});
+
 			if( Id!=null && Id!="" &&  Account!=null && Account!="" && Password!=null && Password!="" ){
-				$.post("http://192.168.1.106:8080/insert",
+				$.post("http://"+ getLocalIP() +":8080/insert",
 					JSON.stringify(objJson),
 					function(data) {
 					   if(data.code == 1){
@@ -147,8 +148,6 @@
 					   }
 					   else
 						   alert(data.msg);
-						//$("#login-alert").alert();
-
 					},
 					"JSON"
 				)
@@ -157,12 +156,7 @@
 				alert("关键输入为空！");
 			}
 
-            
-			
-
         }
-
-
 
 </script>
 
