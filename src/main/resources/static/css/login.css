@@ -1,0 +1,43 @@
+.code
+{
+    background:url(../images/code.jpg);
+    font-family:Arial;
+    font-style:italic;
+    color:blue;
+    font-size:30px;
+    border:0;
+    padding:2px 3px;
+    letter-spacing:3px;
+    font-weight:bolder;
+    float:left;
+    cursor:pointer;
+    width:100px;
+    height:45px;
+    line-height:60px;
+    text-align:center;
+    vertical-align:middle;
+
+}
+a {
+    text-decoration:none;
+    font-size:12px;
+    color:#288bc4;
+}
+a:hover {
+    text-decoration:underline;
+}
+
+
+.login-box{max-width:400px;margin:5% auto;padding:20px;}
+#top-logo{width:90px;height:90px;float:left;margin:10px 30px 10px 10px;}
+#logo-text{margin:20px;color:rgb(50,150,230);}
+#logo-text-en{font-size:40px;line-height:40px;}
+#logo-text-cn{font-size:32px;line-height:32px;}
+.login-title{padding:10px;text-align:center;}
+.login-title h3{margin:0;}
+.login-box-body{background-color:white;padding:20px;}
+#id,#password{text-indent:10px;}
+.input-group{padding:16px;margin-left:auto;margin-right:auto;}
+.input-group button{width:100px;}
+.checkbox{padding-left:20px;}
+#login-alert{display:none;}

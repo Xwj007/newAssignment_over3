@@ -4,51 +4,85 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
-    <style>
+    <link rel="stylesheet" href="../static/css/icon.css">
+    <link rel="stylesheet" href="../static/css/easy_index.css">
 
+    <title>管理员界面</title>
 
-        @font-face {
-            font-family: 'iconfont';  /* project id 586981 */
-            src: url('//at.alicdn.com/t/font_586981_a8ui2tkndfeqm2t9.eot');
-            src: url('//at.alicdn.com/t/font_586981_a8ui2tkndfeqm2t9.eot?#iefix') format('embedded-opentype'),
-            url('//at.alicdn.com/t/font_586981_a8ui2tkndfeqm2t9.woff') format('woff'),
-            url('//at.alicdn.com/t/font_586981_a8ui2tkndfeqm2t9.ttf') format('truetype'),
-            url('//at.alicdn.com/t/font_586981_a8ui2tkndfeqm2t9.svg#iconfont') format('svg');
-        }
-
-        .iconfont {/*对阿里图标进行修饰*/
-            /*color: #c12e2a;*/
-            font-family:"iconfont" !important;
-            font-style:normal;
-            font-weight: bold;/*加粗*/
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-    .login-box{max-width:400px;margin:5% auto;padding:20px;}
-    #top-logo{width:90px;height:90px;float:left;margin:10px 30px 10px 10px;}
-    #logo-text{margin:20px;color:rgb(50,150,230);}
-    #logo-text-en{font-size:40px;line-height:40px;}
-    #logo-text-cn{font-size:32px;line-height:32px;}
-    .login-title{padding:10px;text-align:center;}
-    .login-title h3{margin:0;}
-    .login-box-body{background-color:white;padding:20px;}
-    #id, #account,#password,#nclass{text-indent:10px;}
-    .input-group{padding:16px;margin-left:auto;margin-right:auto;}
-    .input-group button{width:100px;}
-    .checkbox{padding-left:20px;}
-    #login-alert{display:none;}
-    </style>
 </head>
 <body onload="jumpLogin()" style="background-color:#3e2723;">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-4 column pull-left" id="logo-title">
+                    <h1>
+                        管理员操作界面
+                    </h1>
+                </div>
+                <div class="col-md-2 column pull-right">
+                    <div>
+                        <img id="top-logo" src="../static/images/logo.png">
+                        <span id="logo-text-en">PRD &nbsp;Tech</span>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <ul class="nav nav-pills">
+                <li >
+                    <a href="manager.html">首页</a>
+                </li>
+                <li >
+                    <a href="manager_insert1.html">文件导入添加学生</a>
+                </li>
+                <li>
+                    <a href="manager_insert2.html">文件导入添加老师</a>
+                </li>
+                <li  class="active">
+                    <a href="insert.html">单个添加用户</a>
+                </li>
+                <li>
+                    <a href="delete.html">删除用户</a>
+                </li>
+                <li class="dropdown pull-right disabled">
+                    <a><input id="user_name" value="未登录" readonly="true"/></a>
+                </li>
+                <li class="dropdown pull-right disabled">
+                    <a><input id="user_id" value="" readonly="true"/></a>
+                </li>
+                <li class="dropdown pull-right disabled">
+                    <a href="#"></a>
+                </li>
+                <li class="dropdown pull-right">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">个人设置<strong class="caret"></strong></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">修改信息</a>
+                        </li>
+                        <li>
+                            <a href="update_pwd.html">修改密码</a>
+                        </li>
+                        <li class="divider">
+                        </li>
+                        <li>
+                            <a onclick="deleteCookies()">退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<br>
+
 <div class="container" >
     <div class="row">
-        <div class="col-xs-12">
-            <div class="login-box">
-                <div><img id="top-logo" src="../static/images/logo.png"></div>
-                <div id="logo-text"><span id="logo-text-en">PRD &nbsp;Tech</span><br><span id="logo-text-cn">&nbsp;人员添加</span></div>
-            <div class="login-box-body"  onsubmit="return checkForm()">
+        <div class="col-md-3 column">
+            </div>
+        <div class="col-md-5 column">
+            <div class="jumbotron">
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="iconfont">&#xe611;</i></span>
+                    <span class="input-group-addon"><i class="iconfont_2">&#xe611;</i></span>
                     <input id="id" type="text" class="form-control" v-model="id" placeholder="ID">
                 </div>
                 <div class="input-group">
@@ -58,9 +92,9 @@
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                     <input id="password" type="text" class="form-control" v-model="password" placeholder="密码">
-                </div>  
+                </div>
 				<div class="input-group">
-                    <span class="input-group-addon"><i class="iconfont">&#xe69c;</i></span>
+                    <span class="input-group-addon"><i class="iconfont_2">&#xe69c;</i></span>
                     <input id="nclass" type="text" class="form-control" v-model="nclass" placeholder="班级">
                 </div>
                 <div class="input-group">
@@ -72,8 +106,10 @@
                     </label>
                 </div>
                 <div class="input-group"><button id="login-button" onclick="userLogin()" type="submit" class="btn btn-primary">确定</button></div>
+
             </div>
-            </div>
+        </div>
+        <div class="col-md-3 column">
         </div>
     </div>
 </div>
@@ -85,7 +121,6 @@
     <span>alert content</span>
 </div>
 
-
 <script src="../static/js/jquery-3.2.1.min.js"></script>
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/js/vue.js"></script>
@@ -95,10 +130,23 @@
 <script>
     <!--跳转-->
     function jumpLogin() {
-        if(!Cookies.get('s_id') || !Cookies.get('t_id')){
-            alert("您还未登陆！请登陆")
+        if(!Cookies.get('t_id')){
+            alert("您还未登陆！请登陆");
             window.open('login.html','_self');
+        }else{
+            getUser();
         }
+    }
+
+    function getUser(){
+        $('#user_id').val(Cookies.get('t_id'));
+        $('#user_name').val(Cookies.get('t_account'));
+    }
+
+    function deleteCookies() {
+        Cookies.remove('t_id', { path: '' });
+        Cookies.remove('t_account', { path: '' });
+        window.open('login.html','_self');
     }
     $(document).ready(function(){
         $("#id").keydown(function(event){
@@ -119,8 +167,6 @@
         });
 
     });
-
-
 
         function userLogin() {
             var Id,Account, Password, Nclass, Radio;
@@ -144,7 +190,7 @@
 					function(data) {
 					   if(data.code == 1){
 						   alert(data.msg);
-						   window.open("index.html", "_self", Account);
+                           location.reload();//重新加载
 					   }
 					   else
 						   alert(data.msg);
@@ -155,7 +201,6 @@
 			}else{
 				alert("关键输入为空！");
 			}
-
         }
 
 </script>

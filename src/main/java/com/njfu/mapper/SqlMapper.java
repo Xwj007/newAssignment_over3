@@ -1,7 +1,6 @@
 package com.njfu.mapper;
 
 import com.njfu.DTO.Assign_Score;
-import com.njfu.DTO.UserSimpleDTO;
 import com.njfu.entity.*;
 
 import java.util.List;
@@ -20,8 +19,8 @@ public interface SqlMapper {
     List<Object> QueryScore();
     List<Object> QueryAll_file();
 
-    UserSimpleDTO findStudentByAccount(String account);
-    UserSimpleDTO findTeacherByAccount(String account);
+    String findStudentByS_id(String s_id);
+    String findTeacherByT_id(String T_id);
 
     void addStudent(Student test);
     void addTeacher(Teacher test);

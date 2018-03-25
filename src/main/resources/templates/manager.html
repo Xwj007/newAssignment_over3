@@ -8,37 +8,42 @@
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../static/css/index.css">
 
-    <title>老师界面</title>
+    <title>管理员界面</title>
 
 </head>
 
 <body onload="jumpLogin()" style="background-color:#3e2723;">
-
 <div class="container">
     <div class="row clearfix">
-        <div class="col-md-4 column pull-left" id="logo-title">
-            <h1>
-                老师管理界面
-            </h1>
-        </div>
-        <div class="col-md-2 column pull-right">
-            <div>
-                <img id="top-logo" src="../static/images/logo.png">
-                <span id="logo-text-en">PRD &nbsp;Tech</span>
-            </div>
-        </div>
-    </div>
-    <div class="row clearfix">
         <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-4 column pull-left" id="logo-title">
+                    <h1>
+                        管理员操作界面
+                    </h1>
+                </div>
+                <div class="col-md-2 column pull-right">
+                    <div>
+                        <img id="top-logo" src="../static/images/logo.png">
+                        <span id="logo-text-en">PRD &nbsp;Tech</span>
+                    </div>
+                </div>
+            </div>
             <ul class="nav nav-pills">
-                <li class="active">
-                    <a href="#">首页</a>
+                <li  class="active">
+                    <a href="manager.html">首页</a>
+                </li>
+                <li >
+                    <a href="manager_insert1.html">文件导入添加学生</a>
                 </li>
                 <li>
-                    <a href="upload_teacher.html">布置作业</a>
+                    <a href="manager_insert2.html">文件导入添加老师</a>
                 </li>
                 <li>
-                    <a href="download_teacher.html">审批作业</a>
+                    <a href="insert.html">单个添加用户</a>
+                </li>
+                <li>
+                    <a href="delete.html">删除用户</a>
                 </li>
                 <li class="dropdown pull-right">
                     <input id="user_name" value="未登录" readonly="true"/>
@@ -68,7 +73,6 @@
             </ul>
         </div>
     </div>
-
     <div class="row clearfix">
         <div class="col-md-2 column">
         </div>
@@ -88,18 +92,19 @@
         <div class="col-md-2 column">
         </div>
     </div>
+
 </div>
-
-
 
 <!--JavaScript below-->
 <script src="../static/js/jquery-3.2.1.min.js"></script>
 <script src="../static/materialize/js/materialize.min.js"></script>
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="./constant.js"></script>
+<script src="../static/js/jquery.form.min.js" crossorigin="anonymous"></script>
+
 
 <script>
-    $.sidebarMenu($('.sidebar-menu'))
     <!--跳转-->
     function jumpLogin() {
         if(!Cookies.get('t_id')){

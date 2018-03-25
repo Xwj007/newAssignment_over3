@@ -4,43 +4,14 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
-    <style>
+    <link rel="stylesheet" href="../static/css/login.css">
+    <link rel="stylesheet" href="../static/css/icon.css">
 
-        @font-face {
-            font-family: 'iconfont';  /* project id 586981 */
-            src: url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.eot');
-            src: url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.eot?#iefix') format('embedded-opentype'),
-            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.woff') format('woff'),
-            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.ttf') format('truetype'),
-            url('//at.alicdn.com/t/font_586981_0pb447tpbrv5z5mi.svg#iconfont') format('svg');
-        }
-        .iconfont {/*对阿里图标进行修饰*/
-            /*color: #c12e2a;*/
-            font-family:"iconfont" !important;
-            font-style:normal;
-            font-weight: bold;/*加粗*/
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+    <title>登录界面</title>
 
-
-    .login-box{max-width:400px;margin:5% auto;padding:20px;}
-    #top-logo{width:90px;height:90px;float:left;margin:10px 30px 10px 10px;}
-    #logo-text{margin:20px;color:rgb(50,150,230);}
-    #logo-text-en{font-size:40px;line-height:40px;}
-    #logo-text-cn{font-size:32px;line-height:32px;}
-    .login-title{padding:10px;text-align:center;}
-    .login-title h3{margin:0;}
-    .login-box-body{background-color:white;padding:20px;}
-    #id,#password{text-indent:10px;}
-    .input-group{padding:16px;margin-left:auto;margin-right:auto;}
-    .input-group button{width:100px;}
-    .checkbox{padding-left:20px;}
-    #login-alert{display:none;}
-    </style>
 </head>
-<body style="background-color:#3e2723;">
-<div class="container" >
+<body onload="createCode()" style="background-color:#3e2723;">
+<div class="container">
     <div class="row">
         <div class="col-xs-12">
             <div class="login-box">
@@ -49,13 +20,25 @@
             <div class="login-box-body">
                 <div class="login-title"><h3>用户登录</h3></div>
                 <div class="input-group">
-                    <span class="input-group-addon"><i class="iconfont">&#xe611;</i></span>
+                    <span class="input-group-addon"><i class="iconfont_2">&#xe611;</i></span>
                     <input id="id" type="text" class="form-control" v-model="id" placeholder="ID">
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                     <input id="password" type="password" class="form-control" v-model="password" placeholder="密码">
                 </div>
+
+
+                <div class="input-group">
+                    <table border="0" cellspacing="5" cellpadding="5" >
+                        <tr>
+                            <td> <div class="code" id="checkCode" onclick="createCode()" ></div></td>
+                            <td><input  style=" float:right; width: 100px ; height:30px;border: 0.5px solid #b0bec5; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; text-align: center"  type="text"   id="inputCode" placeholder="请输入验证码"/></td>
+                            <td> <a  href="#" onclick="createCode()">看不清换一张</a></td>
+                        </tr>
+                    </table>
+                </div>
+
                 <div class="input-group">
                     <label class="radio-inline">
                         <input type="radio" name="radio" id="radio1" value="student" checked> 学生
@@ -64,7 +47,7 @@
                         <input type="radio" name="radio" id="radio2"  value="teacher"> 老师
                     </label>
                 </div>
-                <div class="input-group"><button id="login-button" onclick="userLogin()" type="submit" class="btn btn-primary">登陆</button></div>
+                <div class="input-group"><button id="login-button" onclick="userLogin();" type="submit" class="btn btn-primary">登陆</button></div>
             </div>
             </div>
         </div>
@@ -98,43 +81,84 @@
     });
 
         function userLogin() {
-            var Id, Password, Radio;
-            Id = $('#id').val();
-            Password = $('#password').val();
-            Radio = $('input[name="radio"]:checked').val();
-	
-			var objJson = {
-                "id":Id,
-				"password":Password,
-                "radio":Radio
-			};
-			if(Id!=null && Id!=""  && Password!=null && Password!="" ){
-			    $.post("http://"+ getLocalIP() +":8080/login",
-					JSON.stringify(objJson),
-					function(data) {
-					   if(data.code == 0){
 
-						    if(Radio == "student"){
-                                Cookies.set('s_id', Id,{ expires: 7, path: '' });
-                                Cookies.set('s_account', data.data.account, { expires: 7, path: '' });
-                                alert(Cookies.get('s_account'));
-                                window.open("index_student.html", "_self");
-                            }else{
-                                Cookies.set('t_id', Id,{ expires: 7, path: '' });
-                                Cookies.set('t_account', data.data.account, { expires: 7, path: '' });
-                                alert(Cookies.get('t_account'));
-                                window.open("index_teacher.html", "_self");
+
+            var inputCode = document.getElementById("inputCode").value;
+            if (inputCode.length <= 0)
+            {
+                alert("请输入验证码！");
+            } else if (inputCode.toUpperCase() == code.toUpperCase()) {
+
+                var Id, Password, Radio;
+
+                Id = $('#id').val();
+                Password = $('#password').val();
+                Radio = $('input[name="radio"]:checked').val();
+
+                var objJson = {
+                    "id":Id,
+                    "password":Password,
+                    "radio":Radio
+                };
+                if(Id!=null && Id!=""  && Password!=null && Password!="" ){
+
+                    //validateCode();
+                    $.post("http://"+ getLocalIP() +":8080/login",
+                        JSON.stringify(objJson),
+                        function(data) {
+                            if(data.code == 0){
+
+
+                                if(Radio == "student"){
+                                    Cookies.set('s_id', Id,{ expires: 7, path: '' });
+                                    Cookies.set('s_account', data.data.account, { expires: 7, path: '' });
+                                    alert(Cookies.get('s_account'));
+                                    window.open("index_student.html", "_self");
+                                }else{
+                                    Cookies.set('t_id', Id,{ expires: 7, path: '' });
+                                    Cookies.set('t_account', data.data.account, { expires: 7, path: '' });
+                                    alert(Cookies.get('t_account'));
+                                    window.open("index_teacher.html", "_self");
+                                }
                             }
-					   }
-					   else
-						   alert(data.msg);
-					},
-					"JSON"
-				)
-			}else{
-				alert("关键输入为空！");
-			}
+                            else
+                                alert(data.msg);
+                        },
+                        "JSON"
+                    )
+                }else{
+                    alert("关键输入为空！");
+                }
+
+            } else {
+
+                alert("验证码输入有误！");
+                createCode();
+            }
+
+
         }
+
+    //生成验证码
+    var code;
+    function createCode() {
+        code = "";
+        var codeLength = 4; //验证码的长度
+        var checkCode = document.getElementById("checkCode");
+        var codeChars = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'); //所有候选组成验证码的字符，当然也可以用中文的
+        for (var i = 0; i < codeLength; i++) {
+            var charNum = Math.floor(Math.random() * 52);
+            code += codeChars[charNum];
+        }
+        if (checkCode) {
+            checkCode.className = "code";
+            checkCode.innerHTML = code;
+        }
+    }
+
+
 </script>
 
 </body>

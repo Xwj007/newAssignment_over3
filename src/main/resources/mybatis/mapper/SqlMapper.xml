@@ -36,6 +36,10 @@
         </where>
     </select>
 
+    <select id="findStudentByS_id"  parameterType="String" resultType="String">
+        SELECT * FROM student WHERE s_id= #{s_id}
+    </select>
+
 
     <delete id="deleteStudent" parameterType="INTEGER" >
         DELETE FROM student WHERE nid = #{nid}
@@ -58,6 +62,10 @@
 
     <select id="QueryTeacher"  resultMap="TeacherResult">
         SELECT * FROM teacher
+    </select>
+
+    <select id="findTeacherByT_id"  parameterType="String" resultType="String">
+        SELECT * FROM teacher WHERE t_id= #{t_id}
     </select>
 
     <insert id="addTeacher"  parameterType="com.njfu.entity.Teacher" >
@@ -195,6 +203,7 @@
         <result column="s_id" jdbcType="VARCHAR" property="s_id"/>
         <result column="c_no_hw" jdbcType="VARCHAR" property="c_no_hw"/>
         <result column="get_score" jdbcType="VARCHAR" property="get_score"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
         <result column="file_no" jdbcType="VARCHAR" property="file_no"/>
     </resultMap>
 
@@ -204,7 +213,7 @@
 
 
     <update id="setScoreGet_score" parameterType="com.njfu.entity.Score">
-        UPDATE score SET get_score= #{get_score} WHERE s_id= #{s_id} AND c_no_hw= #{c_no_hw}
+        UPDATE score SET get_score= #{get_score},reason= #{reason} WHERE s_id= #{s_id} AND c_no_hw= #{c_no_hw}
     </update>
 
     <select id="findScoreByS_id"  parameterType="String" resultMap="ScoreResult">
@@ -282,29 +291,6 @@
     <select id="findAll_fileByFile_no_name"  parameterType="com.njfu.entity.All_file" resultMap="All_fileResult">
         SELECT * FROM all_file WHERE file_no= #{file_no} AND file_name = #{name}
     </select>
-
-
-
-
-
-
-    <!--UserSimpleDTO类集合 -->
-    <resultMap type="com.njfu.DTO.UserSimpleDTO" id="UserSimpleDTOResult">
-        <result column="account" jdbcType="VARCHAR" property="account"/>
-        <result column="password" jdbcType="VARCHAR" property="password"/>
-    </resultMap>
-
-
-
-    <select id="findStudentByAccount" parameterType="String"  resultMap="UserSimpleDTOResult">
-        SELECT * FROM student WHERE account = #{account}
-    </select>
-
-    <select id="findTeacherByAccount"  parameterType="String"  resultMap="UserSimpleDTOResult">
-        SELECT * FROM teacher WHERE account = #{account}
-    </select>
-
-
 
 
 

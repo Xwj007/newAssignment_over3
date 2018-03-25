@@ -1,0 +1,25 @@
+@font-face {
+    font-family: 'iconfont';  /* project id 604056 */
+    src: url('../font/iconfont.ttf'),
+    url('../font/iconfont.svg'),
+    url('../font/iconfont.woff'),
+    url('../font/iconfont.woff');
+}
+
+.iconfont {/*对阿里图标进行修饰*/
+     /*color: #c12e2a;*/
+     font-family:"iconfont" !important;
+     font-style:normal;
+    /* font-weight: bold;!*加粗*!*/
+     -webkit-font-smoothing: antialiased;
+     -moz-osx-font-smoothing: grayscale;
+ }
+
+.iconfont_2 {/*对阿里图标进行修饰*/
+    /*color: #c12e2a;*/
+    font-family:"iconfont" !important;
+    font-style:normal;
+     font-weight: bold;/*加粗*/
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

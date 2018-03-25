@@ -2,16 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
     <link rel="stylesheet" href="../static/materialize/css/materialize.min.css" media="screen,projection">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
-
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../static/css/index.css">
-    <title>学生界面</title>
 
+    <title>学生界面</title>
 
 </head>
 
@@ -104,7 +101,8 @@
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script src="./constant.js"></script>
-<script src="../static/js/jquery.form.min.js" crossorigin="anonymous"></script><script src="./constant.js"></script>
+<script src="../static/js/jquery.form.min.js" crossorigin="anonymous"></script>
+
 
 <script>
 
@@ -144,8 +142,8 @@
         var $th11=$('<th>教师</th>');
         var $th2=$('<th>上传时间</th>');
         var $th3=$('<th>作业介绍</th>');
-        var $th4=$('<th>文件编码</th>');
         var $th5=$('<th>作业状态</th>');
+        var $th4=$('<th>作业评语</th>');
         var $th55=$('<th style="width: 100px;">上传作业文件</th>');
         var $th6=$('<th style="width: 100px;">下载老师任务</th>');
         var $tbody=$('<tbody></tbody>');
@@ -153,8 +151,8 @@
         $trs.append($th11);
         $trs.append($th2);
         $trs.append($th3);
-        $trs.append($th4);
         $trs.append($th5);
+        $trs.append($th4);
         $trs.append($th55);
         $trs.append($th6);
         $thead.append($trs);
@@ -180,10 +178,10 @@
                 $tr.append($td2);
                 var $td3=$('<td>'+data[i].assigns[x]['message']+'</td>');
                 $tr.append($td3);
-                var $td4=$('<td>'+data[i].assigns[x]['file_no']+'</td>');
-                $tr.append($td4);
                 var $td55=$('<td style="font-size: 18px;color: #0f0f0f;font-weight: bold;">'+data[i].assigns[x]['c_no']+'</td>');
                 $tr.append($td55);
+                var $td4=$('<td>'+testReason(data[i].assigns[x]['time'])+'</td>');
+                $tr.append($td4);
                 var $td5 = $('<td><button id="' + data[i].assigns[x]['c_no_hw'] + '" onclick="make_upload(this)" class="btn btn-small btn-info">' +
                     '<i class="glyphicon glyphicon-open">上传</i>' +
                     '</button></td>');
@@ -199,6 +197,13 @@
                 count++;
             }
         }
+    }
+
+    function testReason(getReason) {
+        if(getReason == null || getReason==""){
+            return "无";
+        }
+        return getReason;
     }
 
     <!--学生上传作业提示框-->

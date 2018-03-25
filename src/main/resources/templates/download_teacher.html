@@ -2,34 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-
     <link rel="stylesheet" href="../static/materialize/css/materialize.min.css" media="screen,projection">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
-
     <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="../static/css/index.css">
-    <title>老师界面</title>
-    <style>
-        @font-face {
-            font-family: 'iconfont';  /* project id 586985 */
-            src: url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.eot');
-            src: url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.eot?#iefix') format('embedded-opentype'),
-            url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.woff') format('woff'),
-            url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.ttf') format('truetype'),
-            url('//at.alicdn.com/t/font_586985_h6v78qmazky8ehfr.svg#iconfont') format('svg');
-        }
-        .iconfont {/*对阿里图标进行修饰*/
-            /*color: #c12e2a;*/
-            font-family:"iconfont" !important;
-            font-style:normal;
-            font-weight: bold;/*加粗*/
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+    <link rel="stylesheet" href="../static/css/icon.css">
 
-    </style>
+    <title>老师界面</title>
 
 </head>
 
@@ -101,6 +81,7 @@
                 <aaa>
 
                 </aaa>
+                <button type="button" onclick="getExcel()" id="en_print" class="btn btn-warning pull-right" data-toggle="tooltip" data-placement="left" title="请确定打印此表"><i class="glyphicon glyphicon-ok">确定打印</i></button>
             </div>
         </div>
         <div class="col-md-1 column">
@@ -115,7 +96,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
                                 <select class="form-control" name="select_level"  id="select_level">
                                     <option>----请选择等第----</option>
                                     <option>优</option>
@@ -125,6 +106,8 @@
                                     <option>退回</option>
                                 </select>
                             </div>
+                            <div><label>&nbsp;</label>
+                                <input id="select_reason" name="select_reason" type="text" placeholder="原因"></div>
                             <ccc>
 
                             </ccc>
@@ -149,11 +132,13 @@
 <script src="../static/js/js.cookie.js"></script>
 <script src="../static/bootstrap/js/bootstrap.min.js"></script>
 <script src="./constant.js"></script>
+<script src="../static/js/jquery.table2excel.js"></script>
 
 <script>
 
     /*网页生成时，验证是否登录的跳传*/
     function jumpLogin() {
+        $("#en_print").hide();
         if(!Cookies.get('t_id')){
             alert("您还未登陆！请登陆");
             window.open('login.html','_self');
@@ -189,15 +174,17 @@
         var $th2=$('<th>作业介绍</th>');*/
         var $th3=$('<th>学生学号</th>');
         var $th4=$('<th>学生姓名</th>');
-        var $th2=$('<th>作业等级</th>')
-        var $th5=$('<th style="width: 100px;">评价学生作业</th>');
-        var $th6=$('<th style="width: 100px;">下载学生作业</th>');
+        var $th2=$('<th>作业等级</th>');
+        var $th44=$('<th>作业评语</th>');
+        var $th5=$('<th class="evaluate" style="width: 100px;">评价学生作业</th>');
+        var $th6=$('<th class="evaluate" style="width: 100px;">下载学生作业</th>');
         var $tbody=$('<tbody></tbody>');
         /*$trs.append($th1);
         $trs.append($th2);*/
         $trs.append($th3);
         $trs.append($th4);
         $trs.append($th2);
+        $trs.append($th44);
         $trs.append($th5);
         $trs.append($th6);
         $thead.append($trs);
@@ -223,11 +210,13 @@
             $tr.append($td4);
             var $td2 = $('<td style="font-size: 18px;color: #0f0f0f;font-weight: bold;">' + testGet_score(data.scores[i].get_score) + '</td>');
             $tr.append($td2);
+            var $td44 = $('<td>' + testReason(data.scores[i].reason) + '</td>');
+            $tr.append($td44);
 
-            var $td5 = $('<td><button id="' + data.scores[i].s_id+ '"  name="' + data.c_no_hw+ '" onclick="make_evaluate(this)" class="btn btn-small btn-info" >' +
+            var $td5 = $('<td class="evaluate"><button id="' + data.scores[i].s_id+ '"  name="' + data.c_no_hw+ '" onclick="make_evaluate(this)" class="btn btn-small btn-info" >' +
                 '<i class="glyphicon glyphicon-pencil">评价</i></button></td>');
             $tr.append($td5);
-            var $td6 = $('<td>' +
+            var $td6 = $('<td class="evaluate">' +
                 '<button name="' + data.scores[i].file_no  + '" onclick="Start_Download(this)" type="submit" class="btn btn-small btn-warning"' +
                 ' title="下载提示" data-container="body" data-toggle="popover" data-placement="right" data-content="' +data.scores[i].nid +'个文件正在下载" >' +
                 '<i class="glyphicon glyphicon-download-alt">下载</i>' +
@@ -236,6 +225,15 @@
 
             count++;
         }
+        $("#en_print").show();
+
+    }
+
+    function testReason(getReason) {
+        if(getReason == null || getReason==""){
+            return "无";
+        }
+        return getReason;
     }
 
     function testGet_score(getScore) {
@@ -250,11 +248,13 @@
         var S_id = $('#s_id').val();
         var C_no_hw = $('#c_no_hw').val();
         var Get_score = $('#select_level').val();
+        var Reason = $('#select_reason').val();
 
         var objJson = {
             "s_id":S_id,
             "c_no_hw":C_no_hw,
-            "get_score":Get_score
+            "get_score":Get_score,
+            "reason":Reason
         };
         console.log(objJson);
         if(Get_score!=null && Get_score!="" && Get_score!="----请选择等第----"){
@@ -438,6 +438,23 @@
         $form.append($lable1);
         var $lable2 = $('<d>&nbsp;</d><lable class="label label-info pull-right" id="select_lable2" style="font-size: 23px;color: #0f0f0f;font-weight: bold;"></lable>');
         $form.append($lable2);
+    }
+
+    <!--导出excel-->
+    function getExcel() {
+        var fileName=document.getElementById("select_lable2").innerHTML;
+        console.log(fileName);
+
+        console.log(1);
+        $("#table_info").table2excel({
+            exclude: ".evaluate",
+            name: "Excel Document Name",
+            filename: fileName,
+            exclude_img: true,
+            exclude_links: true,
+            exclude_inputs: true
+        });
+
     }
 
 </script>

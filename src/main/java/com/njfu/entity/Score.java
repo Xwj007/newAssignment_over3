@@ -10,6 +10,7 @@ public class Score {
     private String s_id;
     private String c_no_hw;     //开课编号
     private String get_score;   //成绩
+    private String reason;   //评语
     private String file_no;     //文件存储编号
 
     public Score() {
@@ -57,6 +58,14 @@ public class Score {
 
     public void setGet_score(String get_score) {
         this.get_score = get_score;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public String getFile_no() {

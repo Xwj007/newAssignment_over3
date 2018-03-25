@@ -1,10 +1,14 @@
 package com.njfu.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.njfu.DAO.StudentDAO;
+import com.njfu.DAO.TeacherDAO;
 import com.njfu.DTO.*;
 import com.njfu.entity.*;
 import com.njfu.mapper.SqlMapper;
+import com.njfu.utils.POIUtil;
 import com.njfu.utils.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -96,7 +98,7 @@ public class UserController {
     /**用户登录管理**/
     @PostMapping(value = "/login",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<UserSimpleDTO> userLogin(@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<Object> userLogin(@RequestBody String params, HttpServletRequest request,
                                                     HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -140,10 +142,34 @@ public class UserController {
     }
 
     /***********************************管理员操作***********************************/
+    public ResponseInfoDTO<Object> insertStudent(Student student){//添加student
+        ResponseInfoDTO responseInfoDTO;
+        if( sqlMapper.findStudentByS_id(student.getS_id()) == null ) {
+            sqlMapper.addStudent(student);
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.success.code")), PropertiesUtil.getProperty("add.success.msg"),null);
+            return responseInfoDTO;
+        }else{
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.failure.code")), PropertiesUtil.getProperty("add.failure.msg"),null);
+            return responseInfoDTO;
+        }
+    }
+
+    public ResponseInfoDTO<Object> insertTeacher(Teacher teacher){//添加teacher
+        ResponseInfoDTO responseInfoDTO;
+        if( sqlMapper.findTeacherByT_id(teacher.getT_id()) == null ) {
+            sqlMapper.addTeacher(teacher);
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.success.code")), PropertiesUtil.getProperty("add.success.msg"),null);
+            return responseInfoDTO;
+        }else{
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.failure.code")), PropertiesUtil.getProperty("add.failure.msg"),null);
+            return responseInfoDTO;
+        }
+    }
+
     /**添加用户信息**/
     @PostMapping(value = "/insert",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<UserSimpleDTO> insertResult(@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<Object> insertResult(@RequestBody String params, HttpServletRequest request,
                                                        HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -158,27 +184,18 @@ public class UserController {
         ResponseInfoDTO responseInfoDTO;
         if(radio.equals("student")){
             Student student = new Student(id, account, password, nclass);//创建学生对象，以便添加
-            if( sqlMapper.findStudentByAccount(student.getAccount()) == null ) {
-                sqlMapper.addStudent(student);//添加student
-                responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.success.code")), PropertiesUtil.getProperty("add.success.msg"),student);
-                return responseInfoDTO;
-            }
+            responseInfoDTO = insertStudent(student);
         }else{
             Teacher teacher = new Teacher(id, account, password);//创建老师对象，以便添加
-            if( sqlMapper.findTeacherByAccount(teacher.getAccount()) == null ) {
-                sqlMapper.addTeacher(teacher);//添加teacher
-                responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.success.code")), PropertiesUtil.getProperty("add.success.msg"),teacher);
-                return responseInfoDTO;
-            }
+            responseInfoDTO = insertTeacher(teacher);
         }
-        responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.failure.code")), PropertiesUtil.getProperty("add.failure.msg"),null);
         return responseInfoDTO;
     }
 
     /**更新用户信息--修改密码**/
     @PostMapping(value = "/update_pwd",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<UserSimpleDTO> update_pwd_Result(@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<Object> update_pwd_Result(@RequestBody String params, HttpServletRequest request,
                                                           HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -228,7 +245,7 @@ public class UserController {
     /**删除用户信息**/
     @PostMapping(value = "/delete",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<UserSimpleDTO> deleteResult(@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<Object> deleteResult(@RequestBody String params, HttpServletRequest request,
                                                        HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -261,6 +278,159 @@ public class UserController {
             }
         }
         return responseInfoDTO;
+    }
+
+    /**********************************管理员操作**********************************/
+    public ResponseInfoDTO<Object> readStudentExcel(MultipartFile file){//读取学生excel文件中的用户信息
+        ResponseInfoDTO responseInfoDTO;
+        List<Student> students = new ArrayList<>();
+        try {
+            List<String[]> userList = POIUtil.readExcel(file);
+            for(int i = 0;i<userList.size();i++){
+                String[] users = userList.get(i);
+                Student student = new Student();
+                student.setS_id(users[0]);
+                student.setAccount(users[1]);
+                student.setPassword(users[2]);
+                student.setNclass(users[3]);
+                students.add(student);
+            }
+            /*for(Student ss:students){
+                System.out.println(ss.toString());
+            }*/
+            responseInfoDTO = new ResponseInfoDTO(16, "上传成功" ,students);
+
+        } catch (IOException e) {
+            System.out.println("读取excel文件失败");
+            responseInfoDTO = new ResponseInfoDTO(-1603, "读取excel文件失败！" ,null);
+        }
+        return responseInfoDTO;
+    }
+
+    public ResponseInfoDTO<Object> readTeacherExcel(MultipartFile file){//读取老师excel文件中的用户信息
+        ResponseInfoDTO responseInfoDTO;
+        List<Teacher> teachers = new ArrayList<>();
+        try {
+            List<String[]> userList = POIUtil.readExcel(file);
+            for(int i = 0;i<userList.size();i++){
+                String[] users = userList.get(i);
+                Teacher teacher = new Teacher();
+                teacher.setT_id(users[0]);
+                teacher.setAccount(users[1]);
+                teacher.setPassword(users[2]);
+                teachers.add(teacher);
+            }
+            responseInfoDTO = new ResponseInfoDTO(16, "上传成功" ,teachers);
+
+        } catch (IOException e) {
+            System.out.println("读取excel文件失败");
+            responseInfoDTO = new ResponseInfoDTO(-1603, "读取excel文件失败！" ,null);
+        }
+        return responseInfoDTO;
+    }
+
+
+    /**excel文件上传
+     * 读取excel文件中的用户信息，保存在数据库中
+     */
+    @RequestMapping(value = "/readExcel")
+    @CrossOrigin(allowCredentials = "false")
+    @ResponseBody
+    public ResponseInfoDTO<Object> readExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request,
+                                              HttpServletResponse rsp){
+
+        String select = request.getParameter("select");
+
+        //判断文件是否存在
+        rsp.setHeader("Access-Control-Allow-Methods", "POST");
+        ResponseInfoDTO responseInfoDTO;
+        if(file.isEmpty()){
+            responseInfoDTO = new ResponseInfoDTO(-1601, "上传失败,文件不存在！" ,null);
+            return responseInfoDTO;
+        }
+
+        String fileName = file.getOriginalFilename();//获得文件名
+        //判断文件是否是excel文件
+        if(!fileName.endsWith("xls") && !fileName.endsWith("xlsx")){
+            responseInfoDTO = new ResponseInfoDTO(-1602, "上传失败,不是excel文件！" ,null);
+            return responseInfoDTO;
+        }
+        if(select.equals("students")){
+            return readStudentExcel(file);
+        }else{
+            return readTeacherExcel(file);
+        }
+
+
+    }
+
+    /**添加文件学生用户信息**/
+    @PostMapping(value = "/insert_students",produces="application/json;charset=UTF-8")
+    @CrossOrigin(allowCredentials = "false")
+    public ResponseInfoDTO<Object> insert_students(@RequestBody String params, HttpServletRequest request,
+                                                       HttpServletResponse rsp) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode paramJson = objectMapper.readTree(params);
+
+        StudentDAO studentDAO = JSON.parseObject(params, StudentDAO.class);
+
+        rsp.setHeader("Access-Control-Allow-Methods", "POST");
+        ResponseInfoDTO responseInfoDTO;
+        Teacher testTeacher = new Teacher(studentDAO.getId(),studentDAO.getAccount(),null);
+        if(sqlMapper.findTeacherByOther(testTeacher) != null){
+            for(Student ss:studentDAO.getStudents()){
+                if( sqlMapper.findStudentByS_id(ss.getS_id()) != null ) {
+                    responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.failure.code")), PropertiesUtil.getProperty("add.failure.msg"),ss);
+                    return responseInfoDTO;
+                }
+            }
+
+            for(int i=1;i < studentDAO.getStudents().size();i++){//排除第一行，属性
+                sqlMapper.addStudent(studentDAO.getStudents().get(i));//添加student
+            }
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.success.code")), PropertiesUtil.getProperty("add.success.msg"),null);
+            return responseInfoDTO;
+        }else{
+            responseInfoDTO = new ResponseInfoDTO(-101, "管理员账号不存在",null);
+            return responseInfoDTO;
+        }
+
+    }
+
+
+    /**添加文件老师用户信息**/
+    @PostMapping(value = "/insert_teachers",produces="application/json;charset=UTF-8")
+    @CrossOrigin(allowCredentials = "false")
+    public ResponseInfoDTO<Object> insert_teachers(@RequestBody String params, HttpServletRequest request,
+                                                   HttpServletResponse rsp) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode paramJson = objectMapper.readTree(params);
+
+        TeacherDAO teacherDAO = JSON.parseObject(params, TeacherDAO.class);
+
+        rsp.setHeader("Access-Control-Allow-Methods", "POST");
+        ResponseInfoDTO responseInfoDTO;
+        Teacher testTeacher = new Teacher(teacherDAO.getId(),teacherDAO.getAccount(),null);
+        if(sqlMapper.findTeacherByOther(testTeacher) != null){
+            for(Teacher tt:teacherDAO.getTeachers()){
+                if( sqlMapper.findStudentByS_id(tt.getT_id()) != null ) {
+                    responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.failure.code")), PropertiesUtil.getProperty("add.failure.msg"),tt);
+                    return responseInfoDTO;
+                }
+            }
+
+            for(int i=1;i < teacherDAO.getTeachers().size();i++){//排除第一行，属性
+                sqlMapper.addTeacher(teacherDAO.getTeachers().get(i));//添加teacher
+            }
+            responseInfoDTO = new ResponseInfoDTO(Integer.valueOf(PropertiesUtil.getProperty("add.success.code")), PropertiesUtil.getProperty("add.success.msg"),null);
+            return responseInfoDTO;
+        }else{
+            responseInfoDTO = new ResponseInfoDTO(-101, "管理员账号不存在",null);
+            return responseInfoDTO;
+        }
+
     }
 
 
@@ -297,7 +467,7 @@ public class UserController {
     /**老师删除文件**/
     @PostMapping(value = "/teacher_delete_file",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<UserSimpleDTO> helpT_Delete(@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<Object> helpT_Delete(@RequestBody String params, HttpServletRequest request,
                                   HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -537,7 +707,7 @@ public class UserController {
         String s_id = paramJson.get("s_id").textValue();
         String c_no_hw = paramJson.get("c_no_hw").textValue();
         String get_score = paramJson.get("get_score").textValue();
-        System.out.println(get_score);
+        String reason = paramJson.get("reason").textValue();
 
         Score testScore = new Score(s_id, c_no_hw);
         Score newScore = sqlMapper.findScoreByClass(testScore);
@@ -548,6 +718,7 @@ public class UserController {
             responseInfoDTO = new ResponseInfoDTO(-12, "评价失败，作业已经不存在！",null);
         }else{
             newScore.setGet_score(get_score);
+            newScore.setReason(reason);
             sqlMapper.setScoreGet_score(newScore);
             responseInfoDTO = new ResponseInfoDTO(12, "评价成功！",newScore);
         }
@@ -581,12 +752,14 @@ public class UserController {
                 Score newScore = sqlMapper.findScoreByClass(testScore);
                 if(newScore == null){
                     as.setC_no("未提交");
+                    as.setTime("");//评语获取
                 }else{
                     if(newScore.getGet_score()==null || newScore.getGet_score()==""){
                         as.setC_no("待评价");
                     }else{
                         as.setC_no(newScore.getGet_score());
                     }
+                    as.setTime(newScore.getReason());
                 }
             }
             Teach_AssignDTO teach_assignDTO = new Teach_AssignDTO(sqlMapper.findCourseNameByC_no(teach.getC_no()), sqlMapper.findTeacherNameByT_id(teach.getT_id()),assigns);
@@ -623,7 +796,7 @@ public class UserController {
     /**学生删除自己上传的文件**/
     @PostMapping(value = "/student_delete_file",produces="application/json;charset=UTF-8")
     @CrossOrigin(allowCredentials = "false")
-    public ResponseInfoDTO<UserSimpleDTO> helpS_Delete(@RequestBody String params, HttpServletRequest request,
+    public ResponseInfoDTO<Object> helpS_Delete(@RequestBody String params, HttpServletRequest request,
                                                      HttpServletResponse rsp) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();

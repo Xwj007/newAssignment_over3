@@ -20,6 +20,13 @@
     color: #ffffff;
     vertical-align: text-top;/*垂直居中*/
 }
+
+#btn-upload{
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+}
+
 .top-right-control{color:white;}
 .nav-custom-menu{list-style-type:none;margin:0px;padding:0;overflow:hidden;background-color:white;}
 .nav-custom-menu a{display:block;color:#777777;text-align:center;padding:10px;text-decoration:none;float:right;font-size:18px;}

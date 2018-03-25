@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/materialize/css/materialize.min.css" media="screen,projection">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="../static/images/favicon-32.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="../static/css/icon.css">
+
+    <title>管理员界面</title>
+
+</head>
+
+<body onload="jumpLogin()" style="background-color:#3e2723;">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="row clearfix">
+                <div class="col-md-4 column pull-left" id="logo-title">
+                    <h1>
+                        管理员操作界面
+                    </h1>
+                </div>
+                <div class="col-md-2 column pull-right">
+                    <div>
+                        <img id="top-logo" src="../static/images/logo.png">
+                        <span id="logo-text-en">PRD &nbsp;Tech</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-pills">
+                <li>
+                    <a href="manager.html">首页</a>
+                </li>
+                <li  class="active">
+                    <a href="manager_insert1.html">文件导入添加学生</a>
+                </li>
+                <li>
+                    <a href="manager_insert2.html">文件导入添加老师</a>
+                </li>
+                <li>
+                    <a href="insert.html">单个添加用户</a>
+                </li>
+                <li>
+                    <a href="delete.html">删除用户</a>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_name" value="未登录" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right">
+                    <input id="user_id" value="" readonly="true"/>
+                </li>
+                <li class="dropdown pull-right disabled">
+                    <a href="#"></a>
+                </li>
+                <li class="dropdown pull-right">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">个人设置<strong class="caret"></strong></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">修改信息</a>
+                        </li>
+                        <li>
+                            <a href="update_pwd.html">修改密码</a>
+                        </li>
+                        <li class="divider">
+                        </li>
+                        <li>
+                            <a onclick="deleteCookies()">退出登录</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-1 column">
+
+        </div>
+        <div class="col-md-10 column">
+            <div class="jumbotron">
+                <make_form>
+
+                </make_form>
+                <br/><br/><br/><br/>
+                <aaa>
+
+                </aaa>
+                <button type="button" onclick="insert_student()" id="en_insert" class="btn btn-warning pull-right" data-toggle="tooltip" data-placement="left" title="请确定是否一一对应"><i class="glyphicon glyphicon-ok">确定添加</i></button>
+            </div>
+        </div>
+        <div class="col-md-1 column">
+
+        </div>
+    </div>
+
+
+</div>
+
+<!--JavaScript below-->
+<script src="../static/js/jquery-3.2.1.min.js"></script>
+<script src="../static/materialize/js/materialize.min.js"></script>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/bootstrap/js/bootstrap.min.js"></script>
+<script src="./constant.js"></script>
+<script src="../static/js/jquery.form.min.js" crossorigin="anonymous"></script>
+
+
+
+<script>
+
+    /*网页生成时，验证是否登录的跳传*/
+    function jumpLogin() {
+        $("#en_insert").hide();
+        if(!Cookies.get('t_id')){
+            alert("您还未登陆！请登陆");
+            window.open('login.html','_self');
+        }else{
+            getUser();
+            getSelect();
+        }
+    }
+
+    <!-- 获取登录信息，并修改登录栏-->
+    function getUser(){
+        $('#user_name').val(Cookies.get('t_account'));
+        $('#user_id').val(Cookies.get('t_id'));
+    }
+
+    <!-- 推出登录，删除存储的cookies-->
+    function deleteCookies() {
+        Cookies.remove('t_id', { path: '' });
+        Cookies.remove('t_account', { path: '' });
+        window.open('login.html','_self');
+    }
+
+    <!-- 生成学生之前上传作业的表格-->
+    function getTable_Info(data){
+
+        $("#table_info").remove();
+        var $table=$('<table class="table table-bordered table-condensed" id="table_info"></table>');
+        $("aaa").append($table);
+
+        var $thead=$('<thead></thead>');
+        var $trs=$('<tr class="info"></tr>');
+        var $th1=$('<th>学号</th>');
+        var $th2=$('<th>姓名</th>');
+        var $th3=$('<th>密码</th>');
+        var $th4=$('<th>班级</th>');
+
+        var $tbody=$('<tbody></tbody>');
+        $trs.append($th1);
+        $trs.append($th2);
+        $trs.append($th3);
+        $trs.append($th4);
+        $thead.append($trs);
+        $table.append($thead);
+        $table.append($tbody);
+
+        var count = 0;//表格颜色控制
+        for(var i=0;i<data.length;i++) {
+
+            if (count % 2 == 0) {
+                var $tr = $('<tr></tr>');
+            } else {
+                var $tr = $('<tr class="success"></tr>');
+            }
+            $table.append($tr);
+
+            var $td1 = $('<td>' + data[i].s_id + '</td>');
+            $tr.append($td1);
+            var $td2 = $('<td>' + data[i].account + '</td>');
+            $tr.append($td2);
+            var $td3 = $('<td>' + data[i].password + '</td>');
+            $tr.append($td3);
+            var $td4 = $('<td>' + testReason(data[i].nclass) + '</td>');
+            $tr.append($td4);
+
+            count++;
+        }
+        $("#en_insert").show();
+
+    }
+
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+
+    var all_data;
+
+    function insert_student() {
+        var Account=Cookies.get('t_account');
+        var Id=Cookies.get('t_id');
+
+        var objJson = {
+            "account":Account,
+            "id":Id,
+            "students": all_data
+        };
+        if(Account!=null && Account!=""){
+            $.post("http://"+ getLocalIP() +":8080/insert_students",
+                JSON.stringify(objJson),
+                function(data) {
+                    if(data.code == 1){
+                        console.log(data);
+                        alert(data.msg);
+                    }else {
+                        if(data.code == -100){
+                            console.log(data);
+                            alert(data.data.s_id + data.msg);
+                        }else{
+                            alert(data.msg);
+                        }
+
+                    }
+                },
+                "JSON"
+            )
+        }else{
+            alert("未登录！");
+        }
+
+    }
+
+    function testReason(getReason) {
+        if(getReason == null || getReason==""){
+            return "无";
+        }
+        return getReason;
+    }
+
+    <!-- 上传文件表单，后端返回的信息处理-->
+    function testUpload(){
+
+        $("#form1").ajaxForm(function(data){
+            if(data.code==16){
+                all_data = data.data;
+                console.log(all_data);
+                getTable_Info(data.data);
+            }else{
+                alert(data.msg);
+            }
+        });
+    }
+
+
+    <!--文件导入-->
+    function getSelect() {
+
+        var $form = $('<form id="form1" method="POST" enctype="multipart/form-data" action="http://localhost:8080/readExcel" class="navbar-form navbar-left"></form>');
+        $("make_form").append($form);
+
+        var $div = $('<div class="input-group"><input type="hidden" id="select" name="select" value="students"/>' +
+            '<span class="input-group-addon"><i class="iconfont">&#xe600;</i></span>' +
+            '<input name="file" id="file" type="file" class="form-control" />' +
+            '</div>');
+        $form.append($div);
+
+        var $button = $('<d>&nbsp;&nbsp;</d><button class="btn btn-group" id="btn-upload" onclick="testUpload()"><i class="glyphicon glyphicon-open">上传加载</i></button>');
+        $form.append($button);
+
+    }
+
+</script>
+</body>
+</html>
